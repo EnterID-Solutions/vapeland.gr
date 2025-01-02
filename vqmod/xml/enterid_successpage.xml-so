@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification
+              xmlns="https://github.com/vqmod/vqmod"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://github.com/vqmod/vqmod https://raw.githubusercontent.com/vqmod/vqmod/master/vqmod.xsd">
+              >
+  <id>Order Success Page</id>
+  <version>1.0</version>
+  <vqmver>2.X</vqmver>
+  <author>Enterid</author>
+    <file name="catalog/controller/checkout/success.php">
+    <operation info="">
+      <search position="after"><![CDATA[
+      if (isset($this->session->data['order_id'])) {
+      ]]></search>
+      <add><![CDATA[
+      $data['order_id'] = $this->session->data['order_id'];
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="replace"><![CDATA[
+      $this->response->setOutput($this->load->view('common/success', $data));
+      ]]></search>
+      <add><![CDATA[
+      $this->response->setOutput($this->load->view('common/successorder', $data));
+      ]]></add>
+    </operation>
+  </file>
+  <file name="catalog/language/el-gr/checkout/success.php">
+    <operation info="">
+      <search position="after"><![CDATA[
+      $_['text_success']         = 'Επιτυχία';
+      ]]></search>
+      <add><![CDATA[
+      $_['text_orderid']         = 'Aριθμός παραγγελίας';
+      $_['need_help']         = 'Χρειάζεστε βοήθεια, έχετε κάποια απορία:<br>';
+      $_['leave_comment']         = 'Αν μείνατε ευχαριστημένοι αφήστε μας μια κριτική ';
+      $_['text_success_orderpage'] =       "Σας έχει σταλθεί email με την παραγγελία σας!<br> Παρακαλώ ελέγξτε και την λίστα της ανεπιθύμητης αλληλογραφίας (spam)";
+      ]]></add>
+    </operation>
+  </file>
+  <file name="catalog/language/en-gb/checkout/success.php">
+    <operation info="">
+      <search position="before"><![CDATA[
+      $_['text_success']         = 'Success';
+      ]]></search>
+      <add><![CDATA[
+      $_['text_orderid']         = 'Order ID';
+      $_['need_help']         = 'You need help, have a question:<br>';
+      $_['leave_comment']         = 'If you are happy, leave us a review';
+      $_['text_success_orderpage'] =       "An email has been sent to you with your order!<br>Please also check your spam list";
+
+      ]]></add>
+    </operation>
+  </file>
+</modification>

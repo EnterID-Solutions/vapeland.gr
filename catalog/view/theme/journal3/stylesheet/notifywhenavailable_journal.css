@@ -1,0 +1,15 @@
+.NWA_popover-content {
+    padding: 9px 28px 12px 10px;
+}
+
+input#NWAYourName, input#NWAYourEmail {
+    margin-bottom: 10px;
+}
+
+.NWA_popover-content .nwa-success {
+	display: block !important;
+}
+
+.NWA_popover-content .nwa-success i.fa {
+	margin-bottom: 0.25rem;
+}

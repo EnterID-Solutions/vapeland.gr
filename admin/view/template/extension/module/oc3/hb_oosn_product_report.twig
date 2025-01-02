@@ -1,0 +1,117 @@
+<h3 class="sub-heading"><b>Product: {{ product_name }}</b></h3>
+<div id="product_trend_chart"></div>
+
+<h4><b>Customers looking for this product ({{ pending_customer_count }})</b></h4>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+		<td class="text-left">Email</td>
+		<td class="text-left">Name</td>
+		<td class="text-left">Phone</td>
+		<td class="text-left">Selected Options</td>
+		<td class="text-center">Qty</td>
+		<td class="text-left">Type</td>
+        <td class="text-right">Previous Purchases</td>
+		<td class="text-center">Since</td>
+        <td class="text-left">Enquiry Date</td>
+      </tr>
+    </thead>
+    <tbody>
+      {% if (pending_customers) %} 
+      {% for record in pending_customers %} 
+      <tr>
+	  	<td class="text-left">{{ record['email'] }}</td>
+		<td class="text-left">{{ record['name'] }}</td>
+		<td class="text-left">{{ record['phone'] }}</td>
+        <td class="text-left">{{ record['all_selected_option'] }}</td>
+        <td class="text-center">{{ record['qty'] }}</td>
+		<td class="text-left">{{ record['customer_type'] }}</td>
+		<td class="text-right">{{ record['customer_purchases'] }}</td>
+		<td class="text-center">{{ record['customer_since'] }}</td>
+        <td class="text-right">{{ record['enquiry_date'] }}</td>
+      </tr>
+      {% endfor %} 
+      {% else %} 
+      <tr>
+        <td class="text-center" colspan="9">No Records Found</td>
+      </tr>
+      {% endif %} 
+    </tbody>
+  </table>
+</div>
+
+<h4><b>Customers Archive ({{ notified_customer_count }})</b></h4>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+		<td class="text-left">Email</td>
+		<td class="text-left">Name</td>
+		<td class="text-left">Phone</td>
+		<td class="text-left">Selected Options</td>
+		<td class="text-center">Qty</td>
+		<td class="text-left">Type</td>
+        <td class="text-right">Previous Purchases</td>
+		<td class="text-center">Since</td>
+        <td class="text-left">Enquiry Date</td>
+		<td class="text-left">Notified Date</td>
+      </tr>
+    </thead>
+    <tbody>
+      {% if (notified_customers) %} 
+      {% for record in notified_customers %} 
+      <tr>
+	  	<td class="text-left">{{ record['email'] }}</td>
+		<td class="text-left">{{ record['name'] }}</td>
+		<td class="text-left">{{ record['phone'] }}</td>
+        <td class="text-left">{{ record['all_selected_option'] }}</td>
+        <td class="text-center">{{ record['qty'] }}</td>
+		<td class="text-left">{{ record['customer_type'] }}</td>
+		<td class="text-right">{{ record['customer_purchases'] }}</td>
+		<td class="text-center">{{ record['customer_since'] }}</td>
+        <td class="text-right">{{ record['enquiry_date'] }}</td>
+		<td class="text-right">{{ record['notified_date'] }}</td>
+      </tr>
+      {% endfor %} 
+      {% else %} 
+      <tr>
+        <td class="text-center" colspan="10">No Records Found</td>
+      </tr>
+      {% endif %} 
+    </tbody>
+  </table>
+</div>
+
+<script type="text/javascript">
+google.charts.load('current', {'packages':['line']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+      var data = new google.visualization.DataTable();
+	  	data.addColumn('string', 'Month');
+	  	data.addColumn('number', 'Qty');
+
+		data.addRows([
+		{% for year in allyears %} 
+			{% for alert in total_alert[year] %} 
+				['{{ alert["month"]~' '~year }}', {{ alert["count"] }}],
+			{% endfor %} 
+		{% endfor %} 
+		]);
+
+      var options = {
+        chart: {
+          title: 'Product Subscription Trend',
+        },
+        height: 300
+      };
+
+      var chart = new google.charts.Line(document.getElementById('product_trend_chart'));
+
+      chart.draw(data, google.charts.Line.convertOptions(options));
+	  
+    }  
+	
+</script>	

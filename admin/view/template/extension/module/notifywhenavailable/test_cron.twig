@@ -1,0 +1,28 @@
+<table class="table testCron" style="margin-bottom:0px;">
+	<tr>
+		<td colspan="2"><h5><strong>System information:</strong></h5></td>
+	</tr>
+	<tr>
+		<td>shell_exec() function status:</td>
+		<td><strong><p class="{{ shell_exec_status }}">{{ (shell_exec_status=='Enabled') ? '<span style="color:#4CC417">Enabled</span>' : '<span style="color:#F70D1A">Disabled</span>' }}</strong></td>
+	</tr>
+		<tr><td>{{ cron_folder }}</td>
+			<td><strong><p class="{{ folder_permission }}">{{ (folder_permission is not empty and folder_permission == "Writable") ? '<span style="color:#4CC417">'~folder_permission~'</span>' : '<span style="color:#F70D1A">'~folder_permission~'</span>' }}</strong></td>
+		</tr>
+	<tr>
+		<td>Cron job status:</td>
+		<td><strong><p class="{{ cronjob_status }}">{{ (cronjob_status=='Enabled') ? '<span style="color:#4CC417">Enabled</span>' : '<span style="color:#F70D1A">Disabled</span>' }}</strong></td>
+	</tr>
+	{% if (shell_exec_status=='Enabled' and folder_permission=='Writable' and cronjob_status=='Enabled') %}
+        <tr>
+            <td colspan="2"><h5>Current cron jobs:</h5></td>
+        </tr>
+        {% if (current_cron_jobs is defined) %}
+            {% for cron_job in current_cron_jobs %}
+                {% if cron_job is not empty %}
+                        <tr><td colspan="2"><p class="cronJobEntry">{{ cron_job }}</td></tr>
+		        {% endif %}
+	        {% endfor %}
+	    {% endif %}
+    {% endif %}
+</table>

@@ -1,0 +1,80 @@
+<modification>
+	<id><![CDATA[customers order history]]></id>
+	<version><![CDATA[1.0]]></version>
+	<vqmver><![CDATA[2.0]]></vqmver>
+	<author><![CDATA[Enterid]]></author>
+
+  <file name="admin/view/template/sale/order_list.twig">
+    <operation error="log">
+      <search position="replace"><![CDATA[{{ order.customer }}<br>{{ order.iod.email }}<br>{{ order.iod.telephone }}]]></search>
+      <add><![CDATA[
+        {% if order.olderOrders %}
+        <a class="older-order-popover" style="cursor:pointer;" data-html="true" title="Παλιότερες παραγγελίες" data-toggle="popover" data-content='{{ order.olderOrders }}'>{{ order.customer }}</a><br>{{ order.iod.email }}<br>{{ order.iod.telephone }}
+        {% else %}
+        {{ order.customer }}<br>{{ order.iod.email }}<br>{{ order.iod.telephone }}
+        {% endif %}
+        ]]></add>
+    </operation>
+    <operation error="log">
+      <search position="before"><![CDATA[{{ footer }}]]></search>
+      <add><![CDATA[
+        <script>
+          $(document).ready(function(){
+            $('.older-order-popover').popover();
+          });
+        </script>
+        ]]></add>
+    </operation>
+  </file>
+
+  <file name="admin/controller/sale/order.php">
+    <operation error="log">
+      <search position="before" index="1"><![CDATA[$data['orders'][] = array(]]></search>
+      <add><![CDATA[
+        $older_orders = $this->model_sale_order->getOlderOrdersForCustomer($result['order_id'], $result['customer'], $result['telephone']);
+
+
+        if($older_orders){
+          $html = '<div>';
+          foreach($older_orders as $oo){
+            $html .= '<a href="/admin/index.php?route=sale/order/info&user_token='.$this->request->get['user_token'].'&order_id='.$oo['order_id'].'" target="_blank">Order #'.$oo['order_id'].'</a><br>';
+
+          }
+          $html .= '</div>';
+        } else {
+          $html = false;
+        }
+
+        ]]></add>
+    </operation>
+    <operation error="log">
+      <search position="before" index="1"><![CDATA['customer'      => $result['customer'],]]></search>
+      <add><![CDATA[
+        'olderOrders' => $html,
+        ]]></add>
+    </operation>
+  </file>
+
+    <file name="admin/model/sale/order.php">
+      <operation error="log">
+        <search position="replace"><![CDATA[$sql = "SELECT o.order_id, CONCAT]]></search>
+        <add><![CDATA[$sql = "SELECT o.order_id, o.email, o.telephone, CONCAT]]></add>
+      </operation>
+      <operation error="log">
+        <search position="before"><![CDATA[public function getOrders($data = array()) {]]></search>
+        <add><![CDATA[
+          public function getOlderOrdersForCustomer($order_id, $name='', $phone='') {
+            $sql = "SELECT order_id FROM ".DB_PREFIX."order o WHERE o.order_id <> '".$order_id."' AND (CONCAT(o.firstname, ' ', o.lastname) LIKE '%" . $this->db->escape($name) . "%' OR o.telephone = '".$phone."') AND order_status_id <> '0'";
+            $q = $this->db->query($sql);
+
+            if($q->num_rows > 0){
+              return $q->rows;
+            } else {
+              return false;
+            }
+
+          }
+          ]]></add>
+      </operation>
+    </file>
+</modification>

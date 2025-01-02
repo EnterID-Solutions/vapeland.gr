@@ -1,0 +1,82 @@
+{% if (nwa_data.notifywhenavailable.Enabled != 'no') %}
+			<form id="NotifyWhenAvailableForm">
+               	<input type="hidden" name="NWAProductID" value="{{ NotifyWhenAvailableProductID }}" />
+          		{{ custom_text }}
+               	<div class="NWA_loader"><div class="NWA_loading"></div></div>
+                <div id="NotifyWhenAvailableSuccess"></div>
+            </form>
+<script>
+
+$('#NotifyWhenAvailableSubmit').on('click', function(){
+	$('input#NWAYourName').removeClass("NWA_popover_field_error");
+	$('input#NWAYourEmail').removeClass("NWA_popover_field_error");
+	$('input#NWAYourComment').removeClass("NWA_popover_field_error");
+	$('input#NWACaptcha').removeClass("NWA_popover_field_error");
+	$('div.NWAError').remove();
+
+	var email_validate = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+	if ((document.getElementById("NWAYourName").value == 0) )
+	{
+		  $('input#NWAYourName').addClass("NWA_popover_field_error");
+		  $('input#NWAYourName').after('<div class="NWAError">{{ NotifyWhenAvailable_Error1|escape }}</div>');
+	} else if ((document.getElementById("NWAYourEmail").value.length == 0)) {
+		  $('input#NWAYourEmail').addClass("NWA_popover_field_error");
+		  $('input#NWAYourEmail').after('<div class="NWAError">{{ NotifyWhenAvailable_Error1|escape }}</div>');
+	} else if (!document.getElementById("NWAYourEmail").value.match(email_validate)) {
+		  $('input#NWAYourEmail').addClass("NWA_popover_field_error");
+		  $('input#NWAYourEmail').after('<div class="NWAError">{{ NotifyWhenAvailable_Error2|escape }}</div>');
+	} else if ($('label#NWAPrivacyPolicy input').length > 0 && $('label#NWAPrivacyPolicy input:checked').length == 0) {
+		  $('label#NWAPrivacyPolicy').addClass("NWA_popover_field_error");
+		  $('label#NWAPrivacyPolicy').after('<div class="NWAError">{{ NotifyWhenAvailable_Error3|escape }}</div>');
+	}  else {
+		$.ajax({
+			url: 'index.php?route={{ modulePath }}/submitform',
+			type: 'post',
+			data: $('#NotifyWhenAvailableForm').serialize(),
+			beforeSend: function(){
+				  $('#NotifyWhenAvailableSubmit').hide();
+				  $('.NWA_loader').show();
+    		},
+			success: function(response) {
+				if (response.error) {
+					$('.NWA_loader').hide();
+					$('#NotifyWhenAvailableSubmit').show();
+					if (response.error.nodata) {
+						$('#NotifyWhenAvailableSuccess').after('<div class="NWAError">{{ NotifyWhenAvailable_Error|escape }}</div>');
+					}
+					if (response.error.email) {
+						$('input#NWAYourEmail').addClass("NWA_popover_field_error");
+						$('input#NWAYourEmail').after('<div class="NWAError">{{ NotifyWhenAvailable_Error2|escape }}</div>');
+					}
+					if (response.error.captcha) {
+						$('input#NWACaptcha').addClass("NWA_popover_field_error");
+						$('input#NWACaptcha').after('<div class="NWAError">{{ NotifyWhenAvailable_Error4|escape }}</div>');
+						d = new Date();
+						$("#NWACaptchaImage").attr("src", "index.php?route={{ modulePath }}/captcha/?"+d.getTime());
+					}
+				}
+
+				if (response.success) {
+				console.log(response.success);
+					$('.NWA_loader').hide();
+					$('#NotifyWhenAvailableSubmit').hide();
+					$('#NotifyWhenAvailableSuccess').html("<div class='alert alert-success nwa-success' style='display:none;margin:0;'><i class='fa fa-check-circle'></i>&nbsp;"+response.success+"</div>");
+					$('.nwa-success').fadeIn('slow');
+					$('#NWAYourName').val('');
+					$('#NWAYourEmail').val('');
+					$('#NWAYourComment').val('');
+					$('#NWACaptcha').val('');
+					d = new Date();
+					$("#NWACaptchaImage").attr("src", "index.php?route={{ modulePath }}/captcha/?"+d.getTime());
+				}
+			}
+		});
+	}
+});
+</script>
+    {% if (nwa_data.notifywhenavailable.CustomCSS is not empty) %}
+    <style>
+    {{ nwa_data.notifywhenavailable.CustomCSS }}
+    </style>
+    {% endif %}
+{% endif %}

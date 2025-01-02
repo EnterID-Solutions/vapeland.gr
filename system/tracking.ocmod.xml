@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+<name>Tracking</name>
+<code>ei_tracking</code>
+<version>1.0</version>
+<author>enterid</author>
+<file path="admin/view/template/sale/order_info.twig">
+  <operation error="skip">
+    <search><![CDATA[<fieldset>]]></search>
+    <add position="before"><![CDATA[
+      <fieldset>
+        <legend>{{ text_tracking_section }}</legend>
+        <form class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-tracking-courier">{{ entry_order_tracking_courier }}</label>
+            <div class="col-sm-10">
+              <select name="order_tracking_courier" id="input-tracking-courier" class="form-control">
+                <option value="0">{{ text_select_courier }}</option>
+                {% if couriers %}
+                  {% for c in couriers %}
+                    <option value="{{ c.courier_id }}">{{ c.courier_name }}</option>
+                  {% endfor %}
+                {% endif %}
+              </select>
+
+              <div id="courier-alert" class="alert alert-success alert-dismissible col-sm-6 pull-left" style="margin-top:5px; {% if not courier %} display:none; {% endif %}"><i class="fa fa-exclamation-circle"></i> Courier: <span id="courier-saved">{{ courier }} </span>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+              </div>
+            </div>
+
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-tracking-code">{{ entry_order_tracking_code }}</label>
+            <div class="col-sm-10">
+            <div class="col-sm-8" style="padding-left:0;">
+              <input type="text" name="order_tracking_code" class="form-control" id="input-tracking-code" />
+            </div>
+            <div class="col-sm-2">
+              <button id='save-tracking-code' class="btn btn-outline-secondary" type="button">{{ button_save_tracking_code }}</button>
+            </div>
+
+            <div id="tracking-code-alert" class="alert alert-success alert-dismissible col-sm-6 pull-left" style="margin-top:5px; {% if not tracking_code %} display:none; {% endif %}"><i class="fa fa-exclamation-circle"></i> Tracking Code: <span id="tracking-code-saved">{{ tracking_code }}</span>
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            </div>
+          </div>
+        </form>
+      </fieldset>
+      ]]></add>
+  </operation>
+  <operation error="skip">
+    <search><![CDATA[{{ footer }}]]></search>
+    <add position="before"><![CDATA[
+      <script type="text/javascript"><!--
+        $('#input-tracking-courier').on('change', function(){
+          $.post('index.php?route=extension/module/tracking/ordercourier&user_token={{user_token}}', {courier_id:this.value}).done(function(data){
+            if(data.success){
+              if($('#input-comment').val() == ''){
+                $('#input-comment').val(data.message);
+                $('#input-notify').prop({'checked':true});
+              } 
+            } else {
+              $('#input-comment').val('');
+              $('#input-notify').prop({'checked':false});
+            }
+          });
+        });
+
+        $( "#save-tracking-code" ).on('click', function() {
+          if($('#input-tracking-courier').val() != 0){
+            $.post('index.php?route=extension/module/tracking/addTracking&user_token={{user_token}}', {order_id:{{order_id}}, tracking_code:$("#input-tracking-code").val(), courier_id:$('#input-tracking-courier').val()}).done(function(data){
+              if(data.error){
+                alert(data.msg);
+              } else {
+              $('#tracking-code-saved').html($("#input-tracking-code").val());
+              $('#tracking-code-alert').show();
+
+              $('#courier-saved').html($("#input-tracking-courier").val());
+              $('#courier-alert').show();
+
+              var comment = $('#input-comment').val();
+              $('#input-comment').val(comment.replace(/\[tracking_code\]/g, $("#input-tracking-code").val()));
+              $("#input-tracking-code").val('');
+              $('#input-tracking-courier').val('0');
+              }
+            });
+          } else {
+            alert("{{ error_no_courier_selected }}");
+          }
+        });
+      --></script>
+      ]]></add>
+  </operation>
+</file>
+<file path="admin/controller/sale/order.php">
+  <operation error="skip">
+    <search><![CDATA[$this->load->model('setting/extension');]]></search>
+    <add position="before"><![CDATA[
+      $this->load->model('extension/module/tracking');
+      $data['couriers'] = $this->model_extension_module_tracking->getCouriers();
+      ]]></add>
+  </operation>
+  <operation error="skip">
+    <search><![CDATA[$results = $this->model_sale_order->getOrders($filter_data);]]></search>
+    <add position="after"><![CDATA[
+      $this->load->model('extension/module/tracking');
+      ]]></add>
+  </operation>
+  <operation error="skip">
+    <search index="0"><![CDATA[$data['orders'][] = array(]]></search>
+    <add position="before"><![CDATA[
+      $tracking = $this->model_extension_module_tracking->getOrderTracking($result['order_id']);
+      if($tracking){
+        $courier = $this->model_extension_module_tracking->getCourier($tracking['courier_id']);
+        $msg='<span class="courier-name">'.$courier['courier_name'].'</span><br>';
+        $msg .= '<a href="'.str_replace('[tracking_code]', $tracking['tracking_code'], $courier['courier_url']).'" target="_blank">'.$tracking['tracking_code'].'</a>';
+      } else {
+        $msg = '';
+      }
+      ]]></add>
+  </operation>
+  <operation error="skip">
+    <search index="0"><![CDATA[$data['orders'][] = array(]]></search>
+    <add position="after"><![CDATA[
+      'tracking_msg' => $msg,
+      ]]></add>
+  </operation>
+  <operation error="skip">
+    <search><![CDATA[$data['comment'] = nl2br($order_info['comment']);]]></search>
+    <add position="after"><![CDATA[
+      $this->load->model('extension/module/tracking');
+      $orderTracking = $this->model_extension_module_tracking->getOrderTracking($this->request->get['order_id']);
+      if($orderTracking) {
+        $data['courier'] = $this->model_extension_module_tracking->getCourier($orderTracking['courier_id'])['courier_name'];
+        $data['tracking_code'] = $orderTracking['tracking_code'];
+      } else {
+        $data['courier'] = false;
+        $data['tracking_code'] = false;
+      }
+      ]]></add>
+  </operation>
+</file>
+<file path="admin/language/en-gb/sale/order.php">
+  <operation error="skip">
+    <search><![CDATA[// Text]]></search>
+    <add position="before"><![CDATA[
+      //Order Tracking
+      $_['entry_order_tracking_courier']  = 'Courier';
+      $_['entry_order_tracking_code']     = 'Tracking Code';
+      $_['text_tracking_section']   = 'Tracking section';
+      $_['text_select_courier']     = 'Select Courier...';
+      $_['button_save_tracking_code'] = 'Save Tracking Code';
+      $_['column_tracking'] = 'Tracking';
+      $_['error_no_courier_selected'] = 'Please select a courier';
+      ]]></add>
+  </operation>
+</file>
+<file path="admin/view/template/sale/order_list.twig">
+  <operation error="skip">
+    <search><![CDATA[<td class="text-left">{% if sort == 'order_status' %}]]></search>
+    <add position="after"><![CDATA[
+      <td class="text-left">{{ column_tracking }}</td>
+      ]]></add>
+  </operation>
+  <operation error="skip">
+    <search><![CDATA[<td class="text-left">{{ order.order_status }}</td>]]></search>
+    <add position="after"><![CDATA[
+      <td class="text-left">{{ order.tracking_msg }}</td>
+      ]]></add>
+  </operation>
+</file>
+</modification>

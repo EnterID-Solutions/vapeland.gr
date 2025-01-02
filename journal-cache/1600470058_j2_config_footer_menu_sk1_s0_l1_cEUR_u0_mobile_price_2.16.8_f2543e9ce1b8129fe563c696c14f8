@@ -1,0 +1,82 @@
+<div class="row columns " style="margin-bottom: 10px; padding-bottom: 10px">
+        <div class="column  menu xs-100 sm-50 md-33 lg-20 xl-20 ">
+                <h3>Stores</h3>
+                        <div class="column-menu-wrap" style="">
+        <ul>
+                                    <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=14" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Kallithea's Store</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=15" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Alimos Store</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=16" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Glyfada - Elliniko Store</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=23" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Halandri Store</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=18" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Ag. Stefano's Store</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=21" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>P.Faliro Store</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=25" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Peristeri Store</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=26" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>N. Irakleio Store</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=32" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Aigaleo Store</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=33" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Pagrati Store</a></li>
+                                </ul>
+        </div>
+            </div>
+        <div class="column  menu xs-100 sm-50 md-33 lg-20 xl-20 ">
+                <h3>Our Company</h3>
+                        <div class="column-menu-wrap" style="">
+        <ul>
+                                    <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=31" class="m-item ">Principles</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=30" class="m-item ">Wholesales</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=22" class="m-item ">Vapeland Franchise</a></li>
+                                </ul>
+        </div>
+            </div>
+        <div class="column  menu xs-100 sm-50 md-33 lg-20 xl-20 ">
+                <h3>Customer Service</h3>
+                        <div class="column-menu-wrap" style="">
+        <ul>
+                                    <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=5" class="m-item ">Terms &amp; Conditions</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=37" class="m-item ">Private Policy Notice</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=6" class="m-item ">Delivery Information</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=8" class="m-item ">Returns Information</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=10" class="m-item ">Warranties</a></li>
+                                </ul>
+        </div>
+            </div>
+        <div class="column  menu xs-100 sm-50 md-33 lg-20 xl-20 ">
+                <h3>Extras</h3>
+                        <div class="column-menu-wrap" style="">
+        <ul>
+                                    <li><a href="https://www.vapeland.gr/index.php?route=journal2/blog" class="m-item ">Blog</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=account/voucher" class="m-item ">Gift Vouchers</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=product/special" class="m-item ">Specials</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=information/information&amp;information_id=12" class="m-item ">Contests</a></li>
+                                                <li></li>
+                                </ul>
+        </div>
+            </div>
+        <div class="column  menu xs-100 sm-50 md-33 lg-20 xl-20 ">
+                <h3>My Account</h3>
+                        <div class="column-menu-wrap" style="">
+        <ul>
+                                    <li><a href="https://www.vapeland.gr/index.php?route=account/account" class="m-item ">Account</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=account/order" class="m-item ">Order History</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=account/wishlist" class="m-item wishlist-total">Wish List (<span class="product-count">{{_wishlist_}}</span>)</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=account/newsletter" class="m-item ">Newsletter</a></li>
+                                </ul>
+        </div>
+            </div>
+    </div>
+<div class="row contacts" style="">
+        <div class="contacts-left">
+                    <span class="hint--top has-tooltip" data-hint="Facebook"><a target="_blank" class="contact-icon" href="https://www.facebook.com/VapeLand"><i style="margin-right: 5px; color: rgb(255, 255, 255); font-size: 16px" data-icon="&#xe680;"></i></a><a target="_blank" href="https://www.facebook.com/VapeLand"><span class="contacts-text"></span></a></span>
+                    <span class="hint--top has-tooltip" data-hint="Phone Number"><a  class="contact-icon" href="tel:00302109532878"><i style="margin-right: 5px; color: rgb(255, 255, 255); font-size: 16px" data-icon="&#xe6a3;"></i></a><a  href="tel:00302109532878"><span class="contacts-text"></span></a></span>
+                    <span class="hint--top" data-hint="info@vapeland.gr"><a  class="contact-icon" href="mailto:info@vapeland.gr"><i style="margin-right: 5px; color: rgb(255, 255, 255); font-size: 16px" data-icon="&#xe698;"></i></a><a  href="mailto:info@vapeland.gr"><span class="contacts-text">info@vapeland.gr</span></a></span>
+                    <span class="hint--top has-tooltip" data-hint="Twitter"><a target="_blank" class="contact-icon" href="https://twitter.com/VapelandGr"><i style="margin-right: 5px; color: rgb(255, 255, 255); font-size: 16px" data-icon="&#xe682;"></i></a><a target="_blank" href="https://twitter.com/VapelandGr"><span class="contacts-text"></span></a></span>
+                    <span class="hint--top has-tooltip" data-hint="Instagram"><a target="_blank" class="contact-icon" href="https://www.instagram.com/vapelandgr/"><i style="margin-right: 5px; color: rgb(255, 255, 255); font-size: 16px" data-icon="&#xe686;"></i></a><a target="_blank" href="https://www.instagram.com/vapelandgr/"><span class="contacts-text"></span></a></span>
+                    <span class="hint--top has-tooltip" data-hint="Youtube"><a target="_blank" class="contact-icon" href="https://www.youtube.com/user/vapeland"><i style="margin-right: 5px; color: rgb(255, 255, 255); font-size: 16px" data-icon="&#xe642;"></i></a><a target="_blank" href="https://www.youtube.com/user/vapeland"><span class="contacts-text"></span></a></span>
+                    <span class="hint--top has-tooltip" data-hint="Google Play"><a target="_blank" class="contact-icon" href="https://play.google.com/store/apps/details?id=com.mindwise.vapeland&hl=en_GB"><i><img  style="margin-right: 5px; " src="image/data/BANNERS/play-store.jpg" alt="Google Play" title="Google Play" /></i></a><a target="_blank" href="https://play.google.com/store/apps/details?id=com.mindwise.vapeland&hl=en_GB"><span class="contacts-text"></span></a></span>
+            </div>
+        </div>
+<div class="row columns " style="">
+        <div class="column  text xs-100 sm-100 md-100 lg-100 xl-100 no-title">
+                        <div class="column-text-wrap  block-icon-top" style="">
+                        <span><p>All photographs of electronic cigarretes and related products are property of VapeLand.gr</p></span>
+        </div>
+            </div>
+    </div>

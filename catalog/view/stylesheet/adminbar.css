@@ -1,0 +1,56 @@
+.navbar {
+  min-height: 20px;
+}
+.navbar-custom {
+    background-color:#275e9f;
+    color:#ffffff;
+    border-radius:0;
+    margin-bottom:5px;
+}
+
+.navbar-custom .navbar-nav > li > a {
+    color:#fff;
+}
+
+.navbar-custom .navbar-nav > .active > a {
+    color: #ffffff;
+    background-color:transparent;
+}
+
+.navbar-custom .navbar-nav > li > a:hover,
+.navbar-custom .navbar-nav > li > a:focus,
+.navbar-custom .navbar-nav > .active > a:hover,
+.navbar-custom .navbar-nav > .active > a:focus,
+.navbar-custom .navbar-nav > .open >a {
+    text-decoration: none;
+    background-color: #3f91f1;
+}
+
+.navbar-custom .navbar-brand {
+    color:#eeeeee;
+}
+.navbar-custom .navbar-toggle {
+    background-color:#eeeeee;
+}
+.navbar-custom .icon-bar {
+    background-color:#3f91f1;
+}
+
+
+/* for dropdowns only */
+.navbar-custom .navbar-nav .dropdown-menu  {
+  /*background-color: #3f91f1;*/
+}
+.navbar-custom .navbar-nav .dropdown-menu>li>a  {
+  color: #000;
+}
+
+.navbar-custom .navbar-nav .dropdown-menu>li>a:hover,.navbar-custom .navbar-nav .dropdown-menu>li>a:focus  {
+  color: #3f91f1;
+  background: #eee;
+}
+
+.navbar-custom .navbar-nav>li>a,
+.navbar-custom .navbar-brand {
+  padding: 5px 10px;
+}

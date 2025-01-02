@@ -1,0 +1,311 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+		<button onclick="deletecache();" data-toggle="tooltip" title="{{ button_clear_cache }}" class="btn btn-success"><i class="fa fa-trash"></i></button>
+		<button onclick="deletebackup();" data-toggle="tooltip" title="{{ button_delete_backup }}" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+          <div class="table-responsive">
+            <table id="directory" class="table table-bordered table-hover">
+			  <thead>
+				<tr class="info">
+				  <td class="text-left">{{ entry_directory }}</td>
+				  <td class="text-left">{{ entry_recursive }}</td>
+				  <td></td>
+				</tr>
+			  </thead>
+              {% set rownum = 0 %}
+				{% for row,value in module_oldimage_directory %}
+				  <tbody id="directory-row{{ row }}">
+					<tr>
+					  <td class="text-left">
+						<select class="form-control" name="module_oldimage_directory[{{ row }}][path]">
+						  <option value="">{{ text_select }}</option>
+						  {% for directorylist in directory_list %}
+							{% if directorylist == value.path %}
+							  <option value="{{ directorylist }}" selected="selected">{{ directorylist }}</option>
+							{% else %}
+							  <option value="{{ directorylist }}">{{ directorylist }}</option>
+							{% endif %}
+						  {% endfor %}
+						</select>
+					  </td>
+					  <td class="text-left">
+						<select class="form-control" name="module_oldimage_directory[{{ row }}][recursive]">
+						  {% if value.recursive %}
+							<option value="1" selected="selected">{{ text_yes }}</option>
+							<option value="0">{{ text_no }}</option>
+						  {% else %}
+							<option value="1">{{ text_yes }}</option>
+							<option value="0" selected="selected">{{ text_no }}</option>
+						  {% endif %}
+						 </select>
+					  </td>
+					  <td class="text-left">
+						<a onclick="$('#directory-row{{ row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-times"></i></a>
+					  </td>
+					</tr>
+				  </tbody>
+				  {% set rownum = rownum + 1 %}
+				{% endfor %} 
+			  <tfoot>
+				<tr>
+				  <td colspan="2"></td>
+				  <td class="text-left"><a onclick="addDirectory();" class="btn btn-primary">{{ button_add_dir }}</a></td>
+				</tr>
+				<tr>
+				  <td colspan="3" class="text-left"><a onclick="check();" class="btn btn-success">{{ button_check }}</a></td>
+				</tr>
+			  </tfoot>
+			</table>
+		  </div>
+        </form>
+		<table id="check" class="table table-bordered table-hover">
+		  <tfoot></tfoot>
+		</table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="bobModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body" id="bob">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div><script>
+var row = {{ rownum }};
+var dirlist = {{ directory_list|json_encode() }}
+
+function addDirectory() {
+	
+	html  = '<tbody id="directory-row' + row + '">';
+	html += '  <tr>';
+	html += '	<td class="text-left">';
+	html += '	  <select class="form-control" name="module_oldimage_directory[' + row + '][path]">';
+	html += '		<option value="">{{ text_select }}</option>';
+dirlist.forEach(element => {
+	html += '		<option value="' + element + '">' + element  + '</option>';
+});
+	html += '	  </select>';
+	html += '	</td>';
+	html += '	<td class="text-left">';
+	html += '	  <select class="form-control" name="module_oldimage_directory[' + row + '][recursive]">';
+	html += '		<option value="0">{{ text_no }}</option>';
+	html += '		<option value="1">{{ text_yes }}</option>';
+	html += '	  </select>';
+	html += '	</td>';
+	html += '	<td class="text-left">';
+	html += '	  <a onclick="$(\'#directory-row' + row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-times"></i></a>';
+	html += '	</td>';
+	html += '  </tr>';
+	html += '</tbody>';
+	
+	$('#directory tfoot').before(html);
+	
+	row++;
+}
+
+function check() {
+	var html = '';
+	
+	$('#check thead, #check tbody').remove();
+	
+	$("#form-module select[name*='[path]']").each(function(index){
+		html += '<thead id="check-head' + index + '"' + ($(this).val() == '' ? ' style="display:none;"' : '') + '>';
+		html += '  <tr>';
+		html += '	<td class="left info">' + $(this).val() + ($("#form-module select[name*='[" + index + "][recursive]']").val() == 1 ? ' ({{ text_recursive }})' : '') + '</td>';
+		html += '  </tr>';
+		html += '</thead>';
+		html += '<tbody id="check-body' + index + '"' + ($(this).val() == '' ? ' style="display:none;"' : '') + '>';
+		html += '  <tr>';
+		html += '	<td class="text-left"><img src="view/image/loading.gif" class="loading"></td>';
+		html += '  </tr>';
+		html += '</tbody>';
+	});
+	
+	$('#check').append(html);
+	
+	$.ajax({
+		url: 'index.php?route=extension/module/oldimage/check&user_token={{ user_token }}',
+		type: 'post',
+		data: $('#form-module').serialize(),
+		dataType: 'json',
+		success: function(json) {
+			if (json) {
+				for (var i = 0; i < json.length; i++) {
+					files_length = json[i].length;
+					if (files_length) {
+						tbody_html  = createList(json[i], i);
+					} else {
+						tbody_html = '<div class="col-12 text-center alert alert-warning">{{ text_no_files }}</div>'
+					}
+					
+					$('#check-body' + i + ' td').html(tbody_html);
+				}
+			} else {
+				tbody_html  = '<tbody>';
+				tbody_html += '	<tr>';
+				tbody_html += '	  <th class="text-center alert alert-danger">{{ error_data }}</th>';
+				tbody_html += '	</tr>';
+				tbody_html += '</tbody>';
+				
+				$('#check thead, #check tbody').remove();
+				$('#check').append(tbody_html);
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+function createList(data, index, message) {
+	var html = '';
+	
+	if (typeof message === 'undefined') {
+		message = '';
+	}
+	
+	html += '<form id="form-delete' + index + '" action="{{ delete }}" method="post" enctype="multipart/form-data" class="form-horizontal">';
+	html += message;
+	html += '	<input type="hidden" value="' + $("#form-module select[name='module_oldimage_directory[" + index + "][path]']").val() + '" name="path">';
+	html += '	<input type="hidden" value="' + $("#form-module select[name='module_oldimage_directory[" + index + "][recursive]']").val() + '" name="recursive">';
+	html += '	<div class="well well-sm pre-scrollable list-group">';
+	for (var i = 0; i < data.length; i++) {
+		html += '	  <div class="list-group-item">';
+		html += '		<input name="delete[]" type="checkbox" value="' + data[i]['path'] + '"> ' + data[i]['name'];
+		html += '	  </div>';
+	}
+	html += '	</div>';
+	html += '	<div class="text-left">';
+	html += '	  <a onclick="deleteFiles(' + index + ');" class="btn btn-danger">{{ button_delete }}</a> <a onclick="moveFiles(' + index + ');" class="btn btn-primary">{{ button_move }}</a> <a onclick="selectAll(\'#form-delete' + index + '\');" class="btn btn-default">{{ button_select_all }}</a> <a onclick="unselectAll(\'#form-delete' + index + '\');" class="btn btn-default">{{ button_unselect_all }}</a>';
+	html += '	</div>';
+	html += '</form>';
+	html += '<div class="label label-info">Number of Files Found: ' + data.length + '</div>';
+	
+	return html;
+}
+
+function deleteFiles(index) {
+  if (confirm("Are you Sure?")) {
+	var post = $('#form-delete' + index).serialize();
+
+	$('#check-body' + index + ' td').html('<img src="view/image/loading.gif" class="loading">');
+	
+	$.ajax({
+		url: 'index.php?route=extension/module/oldimage/delete&user_token={{ user_token }}',
+		type: 'post',
+		data: post,
+		dataType: 'json',
+		success: function(json) {
+			if (json.data.length) {
+				html = createList(json.data, index, json.message);
+				$('#check-body' + index + ' td').html(html);
+
+			} else {
+				html = '<div class="col-12">' + json.message + '</div>';
+				$('#check-body' + index + ' td').html(html);
+			}
+		},
+		
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+  }
+}
+
+function moveFiles(index) {
+  if (confirm("Are you Sure?")) {
+	var post = $('#form-delete' + index).serialize();
+
+	$('#check-body' + index + ' td').html('<img src="view/image/loading.gif" class="loading">');
+	
+	$.ajax({
+		url: 'index.php?route=extension/module/oldimage/moveFiles&user_token={{ user_token }}',
+		type: 'post',
+		data: post,
+		dataType: 'json',
+		success: function(json) {
+			if (json.data.length) {
+				html = createList(json.data, index, json.message);
+				$('#check-body' + index + ' td').html(html);
+
+			} else {
+				html = '<div class="col-12">' + json.message + '</div>';
+				$('#check-body' + index + ' td').html(html);
+			}
+		},
+		
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+  }
+}
+
+function deletecache() {
+  if (confirm("Are you Sure?")) {
+	$.ajax({
+		url: 'index.php?route=extension/module/oldimage/clear_cache&user_token={{ user_token }}',
+		type: 'POST',
+		dataType: 'json',     
+		success: function(reply){
+		    $("#bob").html(reply);
+			$("#bobModal").modal('show');
+		}	
+	});
+  }
+}
+
+function deletebackup() {
+  if (confirm("DELETING BACKUP\r\n\r\n     Are you Sure?")) {
+	$.ajax({
+		url: 'index.php?route=extension/module/oldimage/delete_backup&user_token={{ user_token }}',
+		type: 'POST',
+		dataType: 'json',     
+		success: function(reply){
+		    $("#bob").html(reply);
+			$("#bobModal").modal('show');
+		}	
+	});
+  }
+}
+
+function selectAll(form_name) {
+  $(form_name).find(':checkbox').attr('checked', true);
+}
+
+function unselectAll(form_name) {
+  $(form_name).find(':checkbox').attr('checked', false);
+}
+</script> 
+{{ footer }}

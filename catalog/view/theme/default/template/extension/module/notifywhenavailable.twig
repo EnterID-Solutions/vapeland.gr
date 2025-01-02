@@ -1,0 +1,150 @@
+{% if (nwa_data.notifywhenavailable.Enabled == 'yes') %}
+	<div id="NotifyWhenAvailable_popup" style="display:none;width:{{ nwa_data.notifywhenavailable.PopupWidth }}px;" class="NWA_popover bottom">
+		<div class="nwa-inner-wrapper">
+			<div class="arrow"></div>
+			<h3 class="NWA_popover-title">{{ nwa_data.notifywhenavailable.CustomTitle }}</h3>
+			<div class="NWA_popover-content">
+			</div>
+		</div>
+	</div>
+	<script>
+		var origAddToCart;
+		var nwaAddToCartSingle;
+		var nwaOriginalButtons = {};
+		var checkQuantity = function () {
+			var unserialized = $('#product input[type=\'text\'], #product input[type=\'hidden\'], #product input[type=\'radio\']:checked, #product input[type=\'checkbox\']:checked, #product select, #product textarea');
+			var query = unserialized.serialize();
+
+			$.ajax({
+				url: 'index.php?route={{ modulePath }}/checkQuantityNWA',
+				type: 'post',
+				data: query,
+				dataType: 'json',
+				success: function(json) {
+
+					var selector = '#button-cart';
+					setTimeout(function() {
+						var replaced = false;
+						for (i in json) {
+                        	if(!json[i].PO && json[i].product_id) {
+                        		replaced = true;
+                        		propName = '_' + json[i].product_id;
+                        		if (!nwaOriginalButtons.hasOwnProperty(propName)) {
+                        			nwaOriginalButtons[propName] = $(selector).clone(true, true);
+                        		}
+
+                        		if ($('#button-nwa-duplicate').length < 1) {
+		                			var button = $('#button-cart').clone();
+				                    button.attr('id', 'button-nwa-duplicate');
+				                    button.html('{{ (nwa_data.notifywhenavailable.ButtonLabel is empty) ? NotifyWhenAvailable_Button  : nwa_data.notifywhenavailable.ButtonLabel }}');
+									button.attr('value','{{ (nwa_data.notifywhenavailable.ButtonLabel is empty) ? NotifyWhenAvailable_Button  : nwa_data.notifywhenavailable.ButtonLabel }}');
+									button.prop('disabled', false); // some extensions set the disabled attribute
+                                    button.addClass('NWA-btn-action');
+		                		}
+
+                        		if (json.replace_add_to_cart == "0") {
+                        			$('#button-cart').after( button);;
+                        		} else {
+                        			$('#button-cart').replaceWith( button);
+                        		}
+
+                                $(button).on('click', function(){
+                                	nwaAddToCartSingle('#button-nwa-duplicate');
+                                });
+                                if($(button).parents('.form-group').hasClass('outofstock')) {
+                                    $(button).parents('.form-group').removeClass('outofstock')
+                                }
+                        	}
+                        }
+                        unserialized.each(function(i, e) {
+                        	if ($(e).attr('name') == 'product_id') {
+                        		prod_id = $(e).val();
+                        		if (!replaced && nwaOriginalButtons.hasOwnProperty('_'+prod_id)) {
+		                        	$('#button-nwa-duplicate').replaceWith(nwaOriginalButtons['_'+prod_id].clone(true, true).prop('disabled', false));
+                        		}
+                        	}
+                        });
+					}, 100);
+				}
+			});
+		}
+
+	    $(document).ready(function() {
+	    	if($('#button-cart').length > 0) {
+	    		$.each($._data($('#button-cart')[0],'events'), function(i, event) {
+			 		if (i == 'click') {
+			 			$.each(event, function(j, h) {
+			 				if(h.handler.toString().indexOf('index.php?route=checkout/cart/add') > -1) {
+			 					origAddToCart = h.handler;
+			 				}
+					    });
+			 		}
+				});
+	    	}
+
+			var product_id  = '{{ product_id }}';
+
+			if(product_id == 0) {
+				product_id = $('input[name=product_id]').val();
+			}
+
+			if(product_id) {
+				checkQuantity();
+			}
+
+			$('input[name*=option], select[name*=option]').on('change', function() {
+				checkQuantity();
+			});
+
+		    nwaAddToCartSingle =  function(selector) {
+		    	$('.alert, .text-danger').remove();
+				$('.form-group').removeClass('has-error');
+
+	    		$('body').append($('#NotifyWhenAvailable_popup'));
+
+				offset = $(selector).offset();
+
+				$('div#NotifyWhenAvailable_popup').fadeIn('slow');
+       			$(".NWA_popover-content").load("index.php?route={{ modulePath }}/shownotifywhenavailableform&product_id="+product_id, function() {
+       				var window_width = $(window).width();
+					var window_height = $(window).height();
+
+					if (window_width < 600) {
+						if($('.modal-backdrop').length < 1) {
+							$('<div class="modal-backdrop fade in"></div>').appendTo(document.body);
+						} else {
+							$('.modal-backdrop').css('display','block');
+						}
+
+						$('body').css('overflow-y', 'hidden');
+
+						$('.NWA_popover.bottom .arrow').css('display','none');
+
+						$('div#NotifyWhenAvailable_popup').css({
+						    top: 'calc(50% - 50%)',
+			                left: 'calc(50% - 140px)',
+			                position: 'fixed',
+			                // 'margin-top': -$('.nwa-inner-wrapper').height()/2,
+			                // 'margin-left': -$('.nwa-inner-wrapper').width()/2,
+						});
+					} else {
+						$('div#NotifyWhenAvailable_popup').css({
+							top: offset.top,
+							left: ((offset.left-$('div#NotifyWhenAvailable_popup').width()/2) + $(selector).width()/2)
+						});
+					}
+       			});
+
+			};
+
+			$(document).click(function(event) {
+		        if (!$(event.target).is("#NotifyWhenAvailable_popup, button[lkmwa=true], input[lkmwa=true], .NWA_popover-title, .arrow, .NWA_popover-content, #NWAYourName, #NWAYourEmail, #NWAYourComment, #NWAYourComment, #NWACaptchaImage, #NWACaptcha, #NotifyWhenAvailableSubmit, #NotifyWhenAvailable_popup p, #NotifyWhenAvailable_popup span, .NWA_popover, #NotifyWhenAvailableForm, .NWAError, input.NWA_popover_field_error, #button-cart, #button-nwa-duplicate, #NWAPrivacyPolicy, #NWAPrivacyPolicy *")) {
+		            $('div#NotifyWhenAvailable_popup').fadeOut(300);
+		            $('.modal-backdrop').fadeOut(300);
+		            $('body').css('overflow-y', 'inherit');
+		        }
+		    });
+
+		});
+    </script>
+{% endif %}

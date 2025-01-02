@@ -1,0 +1,46 @@
+{# {% if attribute_groups %}
+  <div id="tab-specification">
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            {% for attribute_group in attribute_groups %}
+                <thead>
+                <tr>
+                    <td colspan="2"><strong>{{ attribute_group.name }}</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for attribute in attribute_group.attribute %}
+                    <tr>
+                        <td>{{ attribute.name }}</td>
+                        <td>{{ attribute.text }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            {% endfor %}
+        </table>
+    </div>
+  </div>
+{% endif %} #}
+
+{% if attribute_groups %}
+<div id="tab-specification">
+  <div class="row">
+  {% for attribute_group in attribute_groups %}
+    <!-- <div class="row"> -->
+      {% for attribute in attribute_group.attribute %}
+        <div class="col-md-4 col-sm-6 col-xs-6">
+           <div class="attribute_wrap">
+              <div class="attr_text">
+                {{ attribute.name }}
+              </div>
+              <div class="attr_name">
+                {{ attribute.text }}
+              </div>
+           </div>
+        </div>
+      {% endfor %}
+    <!-- </div> -->
+    {% endfor %}
+  </div>
+</div>
+{% endif %}

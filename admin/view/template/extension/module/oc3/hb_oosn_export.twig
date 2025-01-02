@@ -1,0 +1,52 @@
+<table border="1">
+	<thead style="font-weight:bold;">
+		<tr>
+		<td><strong>ID</strong></td>
+		<td><strong>Product ID</strong></td>
+		<td><strong>Product Name</strong></td>
+		<td><strong>Option Out of Stock</strong></td>
+		<td><strong>Selected Options</strong></td>
+		<td><strong>Quantity</strong></td>
+		<td><strong>Customer Email</strong></td>
+		<td><strong>Customer Name</strong></td>
+		<td><strong>Customer Phone</strong></td>
+		<td><strong>Customer IP</strong></td>
+		<td><strong>Customer Comment</strong></td>
+		<td><strong>Customer Language ID</strong></td>
+		<td><strong>Customer Language</strong></td>
+		<td><strong>Store ID</strong></td>
+		<td><strong>Store URL</strong></td>
+		<td><strong>Enquiry Date</strong></td>
+		<td><strong>Notified Date</strong></td>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% if (products) %} 
+	  {% for product in products %} 
+	  <tr>
+		<td>{{ product['id'] }}</td>
+		<td>{{ product['product_id'] }}</td>
+		<td>{{ product['name'] }}</td>
+		<td>{{ product['selected_option'] }}</td>
+		<td>{{ product['all_selected_option'] }}</td>
+		<td>{{ product['qty'] }}</td>
+		<td>{{ product['email'] }}</td>
+		<td>{{ product['fname'] }}</td>
+		<td>{{ product['phone'] }}</td>
+		<td>{{ product['ip'] }}</td>
+		<td>{{ product['comment'] }}</td>
+		<td>{{ product['language_id'] }}</td>
+		<td>{{ product['language_name']['name'] }}</td>
+		<td>{{ product['store_id'] }}</td>
+		<td>{{ product['store_url'] }}</td>
+		<td>{{ product['enquiry_date'] }}</td>
+		<td>{{ product['notify_date'] }}</td>
+	  </tr>
+	  {% endfor %} 
+	  {% else %} 
+	  <tr>
+		<td class="center" colspan="17">{{ text_no_results }}</td>
+	  </tr>
+	  {% endif %} 
+	</tbody>
+</table>

@@ -1,0 +1,322 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-bestprice-base" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+    </div>
+    <div class="panel-body">
+      <div class="container-fluid">
+        {% if (error_warning) %}
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        {% endif %}
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-bestprice-base" class="form-horizontal">
+         <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+            <li class=""><a href="#tab-extra" data-toggle="tab">Extra</a></li>
+            <li class=""><a href="#tab-about" data-toggle="tab">About</a></li>
+         </ul>
+         <div class="tab-content">
+            <div class="tab-pane active" id="tab-general">
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+                <div class="col-sm-2">
+                  <select name="feed_bestprice_status" id="input-status" class="form-control">
+                  {% if feed_bestprice_status %}
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                    <option value="0">{{ text_disabled }}</option>
+                    {% else %}
+                    <option value="1">{{ text_enabled }}</option>
+                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                    {% endif %}
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-data-feed">{{ entry_data_feed }}</label>
+                <div class="col-sm-10">
+                  <div class="input-group">
+                    <input readonly="readonly" id="input-data-feed" class="form-control" value="{{ data_feed }}" />
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" id="button-xml-view">Open</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-data-feed-xml">{{ entry_data_feed_download }}</label>
+                <div class="col-sm-10">
+                  <div class="input-group">
+                    <input readonly="readonly" id="input-data-feed-xml" class="form-control" value="{{ data_feed_download }}" />
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" id="button-download-xml">Download</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-data-feed-zip">{{ entry_data_feed_zip }}</label>
+                <div class="col-sm-10">
+                  <div class="input-group">
+                    <input readonly="readonly" id="input-data-feed-zip" class="form-control" value="{{ data_feed_zip }}" />
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" id="button-download-zip">Download</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+              	<label class="col-sm-2 control-label" for="input-categories">{{ entry_categories }}</label>
+              	<div class="col-sm-4">
+              		<select multiple="multiple" id="input-categories" name="feed_bestprice_cat[]">
+    				{% if not feed_bestprice_cat is iterable %}
+                    {% set feed_bestprice_cat = [] %}
+                    {% endif %}
+                    {% for category in categories %}
+       	                <option value="{{ category.category_id }}" {{ category.category_id in feed_bestprice_cat ? ' selected=\"selected\"': '' }} > {{ category.name }}</option>
+    	            {% endfor %}
+              		</select>
+    	            <script>
+    	                $(function() {
+    	                    $('#input-categories').change(function() {
+    	                        console.log($(this).val());
+    	                    }).multipleSelect({
+    	                        width: '100%'
+    	                    });
+    	                });
+    	            </script>
+              	</div>
+              </div>
+
+              <div class="form-group">
+              	<label class="col-sm-2 control-label" for="input-description">{{ entry_bpdescription }}</label>
+              	<div class="col-sm-2">
+              	<select id="input-description" name="feed_bestprice_description" class="form-control">
+                    {% if feed_bestprice_description %}
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                    <option value="0">{{ text_disabled }}</option>
+                    {% else %}
+                    <option value="1">{{ text_enabled }}</option>
+                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                    {% endif %}
+                  </select>
+              	</div>
+              </div>
+              <div class="form-group">
+              	<label class="col-sm-2 control-label" for="input-oldprice">{{ entry_oldprice }}</label>
+              	<div class="col-sm-2">
+              	<select id="input-oldprice" name="feed_bestprice_oldprice" class="form-control">
+                    {% if feed_bestprice_oldprice %}
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                    <option value="0">{{ text_disabled }}</option>
+                    {% else %}
+                    <option value="1">{{ text_enabled }}</option>
+                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                    {% endif %}
+                  </select>
+              	</div>
+              </div>
+              <div class="form-group">
+              	<label class="col-sm-2 control-label" for="input-netprice">{{ entry_netprice }}</label>
+              	<div class="col-sm-2">
+              	<select id="input-netprice" name="feed_bestprice_netprice" class="form-control">
+                    {% if feed_bestprice_netprice %}
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                    <option value="0">{{ text_disabled }}</option>
+                    {% else %}
+                    <option value="1">{{ text_enabled }}</option>
+                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                    {% endif %}
+                  </select>
+              	</div>
+              </div>
+              <div class="form-group">
+              	<label class="col-sm-2 control-label" for="input-ean">{{ entry_ean }}</label>
+              	<div class="col-sm-2">
+              	<select id="input-ean" name="feed_bestprice_ean" class="form-control">
+                    {% if feed_bestprice_ean %}
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                    <option value="0">{{ text_disabled }}</option>
+                    {% else %}
+                    <option value="1">{{ text_enabled }}</option>
+                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                    {% endif %}
+                  </select>
+              	</div>
+              </div>
+              <div class="form-group">
+              	<label class="col-sm-2 control-label" for="input-features">{{ entry_features }}</label>
+              	<div class="col-sm-2">
+              	<select id="input-ean" name="feed_bestprice_features" class="form-control">
+                    {% if feed_bestprice_features %}
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                    <option value="0">{{ text_disabled }}</option>
+                    {% else %}
+                    <option value="1">{{ text_enabled }}</option>
+                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                    {% endif %}
+                  </select>
+              	</div>
+              </div>
+
+
+              <hr>
+              <h4>Additional options</h4>
+              <hr>
+              <!--  extra -->
+              <div class="form-group">
+              <label class="col-sm-2 control-label" for="input-weight">{{ entry_weight }}</label>
+              <div class="col-sm-2">
+              	<select id="input-weight" name="feed_bestprice_weight" class="form-control">
+                    {% for wci in weight_classes %}
+                    <option value="{{ wci.weight_class_id }}" {{ wci.weight_class_id == feed_bestprice_weight ? 'selected':'' }} >{{ wci.title }}</option>
+                    {% endfor %}
+                  </select>
+              </div>
+              </div>
+            </div>
+          <div class="tab-pane" id="tab-extra">
+            <div class="form-group">
+              <label class="col-sm-2 control-label" for="input-categories-exclude">{{ entry_categoriesto_exclude }}</label>
+              <div class="col-sm-4">
+                <select multiple="multiple" id="input-categories-exclude" name="feed_bestprice_cat_to_exclude[]">
+          {% if not feed_bestprice_cat_to_exclude is iterable %}
+                  {% set feed_bestprice_cat_to_exclude = [] %}
+                  {% endif %}
+                  {% for category in categories %}
+                      <option value="{{ category.category_id }}" {{ category.category_id in feed_bestprice_cat_to_exclude ? ' selected=\"selected\"': '' }} > {{ category.name }}</option>
+                {% endfor %}
+                </select>
+                <script>
+                    $(function() {
+                        $('#input-categories-exclude').change(function() {
+                            console.log($(this).val());
+                        }).multipleSelect({
+                            width: '100%'
+                        });
+                    });
+                </script>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label" for="input-color-options">{{ entry_ColorOption }}</label>
+              <div class="col-sm-4">
+                <select multiple="multiple" id="input-color-options" name="feed_bestprice_coloroption[]">
+          {% if not feed_bestprice_coloroption is iterable %}
+                  {% set feed_bestprice_coloroption = [] %}
+                  {% endif %}
+                  {% for optionp in Poptions %}
+                      <option value="{{ optionp.option_id }}" {{ optionp.option_id in feed_bestprice_coloroption ? ' selected=\"selected\"': '' }} > {{ optionp.name }}</option>
+                {% endfor %}
+                </select>
+                <script>
+                    $(function() {
+                        $('#input-color-options').change(function() {
+                            console.log($(this).val());
+                        }).multipleSelect({
+                            width: '100%'
+                        });
+                    });
+                </script>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label" for="input-size-options">{{ entry_SizeOption }}</label>
+              <div class="col-sm-4">
+                <select multiple="multiple" id="input-size-options" name="feed_bestprice_sizeoption[]">
+          {% if not feed_bestprice_sizeoption is iterable %}
+                  {% set feed_bestprice_sizeoption = [] %}
+                  {% endif %}
+                  {% for optionp in Poptions %}
+                      <option value="{{ optionp.option_id }}" {{ optionp.option_id in feed_bestprice_sizeoption ? ' selected=\"selected\"': '' }} > {{ optionp.name }}</option>
+                {% endfor %}
+                </select>
+                <script>
+                    $(function() {
+                        $('#input-size-options').change(function() {
+                            console.log($(this).val());
+                        }).multipleSelect({
+                            width: '100%'
+                        });
+                    });
+                </script>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">{{ entry_database_check }}</label>
+              <div class="col-sm-4">
+                <button type="button" class="btn btn-info" id="database-check">{{ button_database_check }}</button>
+              </div>
+              <div class="col-sm-4">
+                <div id="database-check-results" class="alert alert-info" style="display:none;" role="alert"></div>
+              </div>
+            </div>
+
+
+          </div>
+          <div class="tab-pane" id="tab-about">
+            <div class="panel panel-default col-md-4 col-md-offset-4">
+              <div class="panel-heading">Skroutz and Bestprice XML Feed</div>
+              <div class="panel-body">
+             <table class="table table-hover">
+                <tbody>
+                  <tr>
+                    <td>Author:</td>
+                    <td>ITcore</td>
+                  </tr>
+                  <tr>
+                    <td>License</td>
+                    <td>{{license}}</td>
+                  </tr>
+                  <tr>
+                    <td>Support</td>
+                    <td><a href="mailto:support@itcore.gr?Subject=Module%20Support" target="_top">support@itcore.gr</a></td>
+                  </tr>
+                </tbody>
+              </table>
+              </div>
+            </div>
+          </div>
+        </div>
+	</form>
+	</div>
+	</div>
+  </div>
+</div>
+<script type="text/javascript">
+  $('#database-check').on('click', function(){
+    if(confirm('Are you sure?')){
+      $.post('index.php?route=extension/feed/bestprice/databaseCheck&user_token={{ user_token }}').done(function(data){
+        var html='';
+        $.each(data.results, function(i, text){
+          html += text + "<br />\n";
+        })
+        $('#database-check-results').html(html).fadeIn().delay(7000).fadeOut();
+      });
+    }
+  });
+  $('#button-download-xml').on('click', function(){
+    window.open($('#input-data-feed-xml').val());
+  });
+  $('#button-download-zip').on('click', function(){
+    window.open($('#input-data-feed-zip').val());
+  });
+  $('#button-xml-view').on('click', function(){
+    window.open($('#input-data-feed').val());
+  });
+</script>
+{{ footer }}

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>ITcore alphabank</name>
+    <code>itc_alphabank</code>
+    <version>1.0</version>
+    <author>ITcore</author>
+    <link>http://www.itcore.gr</link>
+    <file path="catalog/controller/checkout/success.php">
+        <operation error="log">
+            <search><![CDATA[if (isset($this->session->data['order_id'])) {]]></search>
+            <add position="after"><![CDATA[
+              $this->load->model('extension/payment/alphabank');
+              $alphabank = $this->model_extension_payment_alphabank->getTransaction($this->session->data['order_id']);
+
+              if ($alphabank){
+                $data['alphabank'] = $alphabank;
+                $this->document->addScript('catalog/view/javascript/html2canvas.min.js');
+                $data['transactionData'] = '';
+                $data['transactionData'] .= '<table class="table"><thead><tr><td colspan="2">'.sprintf($this->language->get('text_transaction_data') ,$alphabank['orderid']).'</td></tr></thead>';
+                $data['transactionData'] .= '<tbody>';
+                $data['transactionData'] .= '<tr><td>'.$this->language->get('text_transaction_id').'</td><td>'.$alphabank['txId'].'</td></tr>';
+                $data['transactionData'] .= '<tr><td>'.$this->language->get('text_transaction_date').'</td><td>'.$alphabank['TransactionDateTime'].'</td></tr>';
+                $data['transactionData'] .= '</tbody></table>';
+                $data['order_id'] = $alphabank['orderid'];
+
+              } else {
+                $data['transactionData'] = false;
+              }
+              $data['bank'] = "Alphabank";
+
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/language/en-gb/checkout/success.php">
+        <operation error="log">
+            <search><![CDATA[$_['heading_title']]]></search>
+            <add position="after"><![CDATA[
+              //success
+              $_['text_transaction_data']       = 'Transaction Data for Order #%d';
+              $_['text_transaction_id']         = 'Transaction Id';
+              $_['text_transaction_date']       = 'Transaction Date';
+              $_['button_download_image']       = 'Download Screenshot';
+
+              //mail
+              $_['text_greeting']       = 'You have completed the transaction for order #%d, below the transaction details.';
+              $_['text_subject']        = 'Transactions Details for Order #%d';
+
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/language/el-gr/checkout/success.php">
+        <operation error="log">
+            <search><![CDATA[$_['heading_title']]]></search>
+            <add position="after"><![CDATA[
+              //success
+              $_['text_transaction_data']       = 'Πληροφορίες συναλλαγής για παραγγελία #%d';
+              $_['text_transaction_id']         = 'Αναγνωριστικό Συναλλαγής';
+              $_['text_transaction_date']       = 'Ημερομηνία Συναλλαγής';
+              $_['button_download_image']       = 'Αποθηκεύστε Screenshot';
+
+              //mail
+              $_['text_greeting']       = 'Ολοκληρώσατε τη συναλλαγή για την παραγγελία #%d, Παρακάτω λεπτομέρειες της συναλλαγής.';
+              $_['text_subject']        = 'Πληροφορίες συναλλαγής για παραγγελία #%d';
+
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/common/success.twig">
+      <operation error="skip">
+        <search><![CDATA[{{ text_message }}]]></search>
+        <add position="after"><![CDATA[
+          {% if transactionData and bank == "Alphabank" %}
+            <div id="transaction-data">
+              {{ transactionData }}
+            </div>
+            <button id="save-image-cmd" class="btn btn-success">{{ button_download_image }}</button>
+          {% endif %}
+          ]]></add>
+      </operation>
+      <operation error="log">
+        <search><![CDATA[{{ footer }}]]></search>
+        <add position="before"><![CDATA[
+          {% if transactionData and bank == "Alphabank" %}
+          <script>
+            $('#save-image-cmd').click(function(){
+              html2canvas($('body'),
+              {
+                onrendered: function (canvas) {
+                  var a = document.createElement('a');
+                  a.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
+                  a.download = 'order_{{ order_id }}.jpg';
+                  a.click();
+                }
+              });
+            });
+          </script>
+          {% endif %}
+          ]]></add>
+      </operation>
+    </file>
+
+  </modification>

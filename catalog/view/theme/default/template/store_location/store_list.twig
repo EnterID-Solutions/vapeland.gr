@@ -1,0 +1,46 @@
+{{ header }}
+<div id="information-information" class="">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-sm-9' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+    <div class="container">
+    <div id="contener" class="{{ class }}">{{ content_top }}
+      <h1>{{ heading_title }}</h1>
+      <section class="archive-grid">
+
+        {% for store in stores %}
+        <div class="archive-grid-card">
+            <div class="archive-grid-img">
+                <a href="{{store.url}}"><img src="{{store.image}}"></a>
+            </div>
+
+            <div class="archive-grid-content">
+                <a href="{{store.url}}">
+                    <h3>{{store.name}}</h3>
+                </a>
+                <p class="archive-grid-content-inner">
+                <i class="fa fa-home"></i> <span class="list-info">{{store.address}}</span><br>
+                <i class="fa fa-phone"></i> <span class="list-info"> {{store.phone}}</span><br>
+                <i class="fa fa-envelope-o"></i> <span class="list-info">{{store.email}}</span>
+                </p>
+                <div class="archive-grid-content-footer">
+                    <p>{{store.status}}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+      </section>
+      {{ content_bottom }}</div></div>
+    {{ column_right }}</div>
+</div>
+{{ footer }}

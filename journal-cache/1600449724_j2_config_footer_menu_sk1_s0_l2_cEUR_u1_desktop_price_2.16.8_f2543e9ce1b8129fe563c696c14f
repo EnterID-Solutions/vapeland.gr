@@ -1,0 +1,82 @@
+<div class="row columns " style="margin-bottom: 10px; padding-bottom: 10px">
+        <div class="column  menu xs-100 sm-50 md-33 lg-20 xl-20 ">
+                <h3>Καταστήματα</h3>
+                        <div class="column-menu-wrap" style="">
+        <ul>
+                                    <li><a href="https://www.vapeland.gr/καταστημα-καλλιθεας" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Κατάστημα Καλλιθέας</a></li>
+                                                <li><a href="https://www.vapeland.gr/καταστημα-αλιμος-ανω-καλαμακι" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Κατάστημα Αλίμου</a></li>
+                                                <li><a href="https://www.vapeland.gr/καταστημα-γλυφαδα-ελληνικο" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Κατάστημα Άνω Γλυφάδας</a></li>
+                                                <li><a href="https://www.vapeland.gr/καταστημα-χαλανδρι" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Κατάστημα Χαλανδρίου</a></li>
+                                                <li><a href="https://www.vapeland.gr/καταστημα-αγιος-στεφανος" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Κατάστημα Αγ. Στέφανου</a></li>
+                                                <li><a href="https://www.vapeland.gr/καταστημα-παλαιου-φαληρου" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Κατάστημα Π.Φαλήρου</a></li>
+                                                <li><a href="https://www.vapeland.gr/καταστημα-περιστερι" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Κατάστημα Περιστερίου</a></li>
+                                                <li><a href="https://www.vapeland.gr/καταστημα-νεο-ηρακλειο" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Κατάστημα Ν. Ηρακλείου</a></li>
+                                                <li><a href="https://www.vapeland.gr/καταστημα-αιγαλεω" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Κατάστημα Αιγάλεω</a></li>
+                                                <li><a href="https://www.vapeland.gr/pagrati-store" class="m-item "><i style="margin-right: 5px; font-size: 16px" data-icon="&#xe61a;"></i>Κατάστημα Παγκρατίου</a></li>
+                                </ul>
+        </div>
+            </div>
+        <div class="column  menu xs-100 sm-50 md-33 lg-20 xl-20 ">
+                <h3>Η Εταιρεια Μας</h3>
+                        <div class="column-menu-wrap" style="">
+        <ul>
+                                    <li><a href="https://www.vapeland.gr/vapeland-παρουσιαση" class="m-item ">Οι Αξίες Μας</a></li>
+                                                <li><a href="https://www.vapeland.gr/vapeland-χονδρικη" class="m-item ">Πωλήσεις Χονδρικής</a></li>
+                                                <li><a href="https://www.vapeland.gr/Vapeland-Franchise" class="m-item ">Vapeland Franchise </a></li>
+                                </ul>
+        </div>
+            </div>
+        <div class="column  menu xs-100 sm-50 md-33 lg-20 xl-20 ">
+                <h3>Εξυπηρέτηση Πελατών</h3>
+                        <div class="column-menu-wrap" style="">
+        <ul>
+                                    <li><a href="https://www.vapeland.gr/οροι-χρησης" class="m-item ">Όροι Χρήσης</a></li>
+                                                <li><a href="https://www.vapeland.gr/πολιτικη-προστασιας-προσωπικων-δεδομενων" class="m-item ">Πολιτική Προστασίας Προσωπικών Δεδομένων</a></li>
+                                                <li><a href="https://www.vapeland.gr/πληροφοριες-αποστολης" class="m-item ">Πληροφορίες Αποστολών</a></li>
+                                                <li><a href="https://www.vapeland.gr/πληροφοριες-επιστροφων" class="m-item ">Πληροφορίες Επιστροφών</a></li>
+                                                <li><a href="https://www.vapeland.gr/εγγυησεις" class="m-item ">Εγγυήσεις</a></li>
+                                </ul>
+        </div>
+            </div>
+        <div class="column  menu xs-100 sm-50 md-33 lg-20 xl-20 ">
+                <h3>Επιπρόσθετα</h3>
+                        <div class="column-menu-wrap" style="">
+        <ul>
+                                    <li><a href="https://www.vapeland.gr/blog" class="m-item ">Blog</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=account/voucher" class="m-item ">Αγορά Δωροεπιταγής</a></li>
+                                                <li><a href="https://www.vapeland.gr/special" class="m-item ">Προσφορές</a></li>
+                                                <li><a href="https://www.vapeland.gr/διαγωνισμος" class="m-item ">Διαγωνισμοί</a></li>
+                                                <li></li>
+                                </ul>
+        </div>
+            </div>
+        <div class="column  menu xs-100 sm-50 md-33 lg-20 xl-20 ">
+                <h3>Ο Λογαριασμός μου</h3>
+                        <div class="column-menu-wrap" style="">
+        <ul>
+                                    <li><a href="https://www.vapeland.gr/account" class="m-item ">O Λογαριασμός μου</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=account/order" class="m-item ">Ιστορικό Παραγγελιών</a></li>
+                                                <li><a href="https://www.vapeland.gr/wishlist" class="m-item wishlist-total">Λίστα Επιθυμιών (<span class="product-count">{{_wishlist_}}</span>)</a></li>
+                                                <li><a href="https://www.vapeland.gr/index.php?route=account/newsletter" class="m-item ">Λήψη Ενημερωτικών Δελτίων</a></li>
+                                </ul>
+        </div>
+            </div>
+    </div>
+<div class="row contacts" style="">
+        <div class="contacts-left">
+                    <span class="hint--top has-tooltip" data-hint="Facebook"><a target="_blank" class="contact-icon" href="https://www.facebook.com/VapeLand"><i style="margin-right: 5px; color: rgb(255, 255, 255); font-size: 16px" data-icon="&#xe680;"></i></a><a target="_blank" href="https://www.facebook.com/VapeLand"><span class="contacts-text"></span></a></span>
+                    <span class="hint--top has-tooltip" data-hint="Τηλέφωνο"><a  class="contact-icon" href="tel:00302109532878"><i style="margin-right: 5px; color: rgb(255, 255, 255); font-size: 16px" data-icon="&#xe6a3;"></i></a><a  href="tel:00302109532878"><span class="contacts-text"></span></a></span>
+                    <span class="hint--top" data-hint="info@vapeland.gr"><a  class="contact-icon" href="mailto:info@vapeland.gr"><i style="margin-right: 5px; color: rgb(255, 255, 255); font-size: 16px" data-icon="&#xe698;"></i></a><a  href="mailto:info@vapeland.gr"><span class="contacts-text">info@vapeland.gr</span></a></span>
+                    <span class="hint--top has-tooltip" data-hint="Twitter"><a target="_blank" class="contact-icon" href="https://twitter.com/VapelandGr"><i style="margin-right: 5px; color: rgb(255, 255, 255); font-size: 16px" data-icon="&#xe682;"></i></a><a target="_blank" href="https://twitter.com/VapelandGr"><span class="contacts-text"></span></a></span>
+                    <span class="hint--top has-tooltip" data-hint="Instagram"><a target="_blank" class="contact-icon" href="https://www.instagram.com/vapelandgr/"><i style="margin-right: 5px; color: rgb(255, 255, 255); font-size: 16px" data-icon="&#xe686;"></i></a><a target="_blank" href="https://www.instagram.com/vapelandgr/"><span class="contacts-text"></span></a></span>
+                    <span class="hint--top has-tooltip" data-hint="Youtube"><a target="_blank" class="contact-icon" href="https://www.youtube.com/user/vapeland"><i style="margin-right: 5px; color: rgb(255, 255, 255); font-size: 16px" data-icon="&#xe642;"></i></a><a target="_blank" href="https://www.youtube.com/user/vapeland"><span class="contacts-text"></span></a></span>
+                    <span class="hint--top has-tooltip" data-hint="Google Play"><a target="_blank" class="contact-icon" href="https://play.google.com/store/apps/details?id=com.mindwise.vapeland&hl=en_GB"><i><img  style="margin-right: 5px; " src="image/data/BANNERS/play-store.jpg" alt="Google Play" title="Google Play" /></i></a><a target="_blank" href="https://play.google.com/store/apps/details?id=com.mindwise.vapeland&hl=en_GB"><span class="contacts-text"></span></a></span>
+            </div>
+        </div>
+<div class="row columns " style="">
+        <div class="column  text xs-100 sm-100 md-100 lg-100 xl-100 no-title">
+                        <div class="column-text-wrap  block-icon-top" style="">
+                        <span><p>Όλες οι φωτογραφίες που αφορούν το ηλεκτρονικό τσιγάρο και τα σχετικά με αυτό προϊόντα&nbsp;αποτελούν ιδιοκτησία του VapeLand.gr</p></span>
+        </div>
+            </div>
+    </div>

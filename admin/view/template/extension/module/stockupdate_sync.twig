@@ -1,0 +1,60 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error.error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error.error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-sm-9"><h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_sync_panel_header }}</h3></div>
+          <div class="col-sm-3"><div class="pull-right"><span class="badge">{{to_update_sum}}</span> Products to update <button class="btn btn-xs btn-info" id="button-update"> Start Update </button></div></div>
+        </div>
+      </div>
+      <div class="panel-body">
+        {% for product_id in products_to_update %}
+          {% if loop.index <= 3 %}
+          <div>Product "{{ product_id }}" will be updated  with  new stock</div>
+          {% endif %}
+        {% endfor %}
+        ...
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var products_to_update = {{ products_to_update|json_encode }};
+$('#button-update').on('click', function(){
+  $('.panel-body').html('');
+  var t=0;
+  $.each(products_to_update, function(index, value){
+    t++;
+    setTimeout(function() {
+      $.post('index.php?route=extension/module/stockupdate/setQuantity&user_token={{user_token}}', {product_id:index, remote_id:value}).done(function(data){
+        if(data.success){
+          $('.panel-body').append('<div>"'+ data.success +' </div>');
+        } else {
+          $('.panel-body').append('<div>"'+ data.error +' </div>');
+        }
+
+      });
+    }, (t * 500) + 500);
+  });
+});
+</script>
+{{ footer }}

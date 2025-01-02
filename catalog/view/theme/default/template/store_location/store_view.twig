@@ -1,0 +1,111 @@
+{{ header }}
+<div id="information-information" class="">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-sm-9' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+    <div class="container">
+    <div id="contener" class="{{ class }}">{{ content_top }}
+      <h1>{{ name }}</h1>
+
+      <section class="detail-grid">
+          <div class="detail-main">
+              <div class="detail-card">
+                  <img src="{{ image }}">
+              </div>
+              <div class="detail-card">
+                  <div class="detail-card-title">
+                      <h3>{{text_description}}</h3>
+                  </div>
+                  <div class="detail-card-content">
+                    {{description}}
+                  </div>
+              </div>
+              {% if tips %}
+              <div class="detail-card">
+                  <div class="detail-card-title">
+                      <h3>{{ text_tips_title }}</h3>
+                  </div>
+                  <div class="detail-card-content">
+                      <div class="detail-card-features">
+                        {% for tip in tips %}
+                          <div><i class="fa {{ tip.fa }}"></i> {{ tip.tip }}</div>
+                        {% endfor %}
+                      </div>
+                  </div>
+              </div>
+              {% endif %}
+              {% if images %}
+              <div class="detail-card">
+                  <div class="detail-card-title">
+                      <h3>{{ text_store_gallery }}</h3>
+                  </div>
+                  <div class="detail-card-content">
+                      <div class="detail-card-slider">
+                          <div class="detail-card-slides">
+                            {% for image in images %}
+                            <div><img src="{{ image.item }}"></div>
+                            {% endfor %}
+                          </div>
+                          <ul class="controls" id="detail-card-slider-nav" tabindex="0">
+                              <li class="fa fa-prev" data-controls="prev" tabindex="-1">
+                                  <i class="fa fa-angle-left"></i>
+                              </li>
+                              <li class="fa fa-next" data-controls="next" tabindex="-1">
+                                  <i class="fa fa-angle-right"></i>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+              {% endif %}
+          </div>
+          <div class="detail-aside">
+              <div class="detail-card">
+                  <div class="detail-card-title detail-no-margin">
+                      <h3>{{ text_store_information }}</h3>
+                  </div>
+                  <div>
+                    {{ google_map }}
+                  </div>
+                  <div class="detail-card-content">
+                      <ul class="detail-card-list">
+                          <li><i class="fa fa-home"></i>{{address}}</li>
+                          <li><i class="fa fa-phone"></i> {{phone}}</li>
+                          <li><i class="fa fa-envelope-o"></i>{{email}}</li>
+                      </ul>
+                  </div>
+              </div>
+              <div class="detail-card">
+                  <div class="detail-card-title detail-no-margin">
+                      <h3>{{ text_opening_times }}</h3>
+                  </div>
+                  <div class="detail-card-content">
+                      <ul class="detail-card-list detail-card-hours">
+                          <li><span>{{ text_monday }}</span> <span>{{ times.monday }}<span></span></li>
+                          <li><span>{{ text_tuesday }}</span> <span>{{ times.tuesday }}</span></li>
+                          <li><span>{{ text_wednesday }}</span> <span>{{ times.wednesday }}</span></li>
+                          <li><span>{{ text_thursday }}</span> <span>{{ times.thursday }}</span></li>
+                          <li><span>{{ text_friday }}</span> <span>{{ times.friday }}</span></li>
+                          <li><span>{{ text_saturday }}</span> <span>{{ times.saturday }}</span></li>
+                          <li><span>{{ text_sunday }}</span> <span>{{ times.sunday }}</span></li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </section>
+
+      {{ content_bottom }}</div></div>
+    {{ column_right }}</div>
+</div>
+<script src="catalog/view/javascript/store_location.js"></script>
+{{ footer }}

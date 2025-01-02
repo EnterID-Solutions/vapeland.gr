@@ -1,0 +1,142 @@
+<!-- Age Verification Modal Popup Starts -->
+<div class="modal-wrap" id="ageconfirm">
+	<div class="mp-modal mp-effect-{{ popup_effect }}" id="modal-{{ popup_effect }}">
+		<div class="mp-content">
+			<div class="modal-content-wrap">
+				<div class="check text-center">
+					{% if logo %}
+						<img class="img-responsive" src="{{ logo }}" alt="{{ name }}" />
+					{% else %}
+						<i class="fa fa-check" aria-hidden="true"></i>
+					{% endif %}
+				</div>
+				{% if heading_title %} 
+					<div class="modal-header">
+						<h2 class="modal-title">{{ heading_title }}</h2>
+					</div>	
+				{% endif %}
+				<div class="popup-description">	
+					<div class="description">
+						 {{ html }}
+					</div>
+
+					<div class="button-group text-center">
+						<button type="button" onclick="ageConfirm(this);" class="btn btn-success" id='age-confirmed'><i class="fa fa-check" aria-hidden="true"></i> {{ agree }}</button>
+						{% if ageconfirm_redirect %}
+						<a href="{{ link }}" class="btn btn-danger col-sm-offset-2"><i class="fa fa-close" aria-hidden="true"></i> {{ decline }}</a>
+						{% else %}
+						<a class="btn btn-danger col-sm-offset-2" onclick="ageNotConfirm(this);"><i class="fa fa-close" aria-hidden="true"></i> {{ decline }}</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			<div class="bg-overlay"></div>
+		</div>
+	</div>
+	<div class="mp-overlay"></div>
+	<script type="text/javascript">
+		function ageConfirm(me) {
+			$.ajax({
+				url: 'index.php?route=common/ageconfirm/confirmed',
+				type: 'post',
+				data: 'confirmed=1',
+				dataType: 'json',
+				beforeSend: function() {
+					$(me).button('loading');
+				},
+				complete: function() {
+					$(me).button('reset');
+				},
+				success: function(json) {
+					$('#ageconfirm .alert, #ageconfirm .text-danger').remove();
+
+					if(typeof json['success'] != 'undefined') {
+						setTimeout(function(){ 
+							$('#ageconfirm .mp-modal').removeClass("mp-show");
+							$('body').removeClass("mp-modal-open");
+						}, 500);
+					} else {
+						$('#ageconfirm .description').before('<div class="text-danger text-center"><i class="fa fa-check-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					}
+				}
+			});
+		}
+
+		function ageNotConfirm(me) {
+			$('#ageconfirm .popup-description').html('<div class="description">{{ error_message }}</div>');
+		}
+
+		{% if not force %}
+		$(document).delegate('.mp-overlay', 'click', function () {
+			$('#ageconfirm .mp-modal').removeClass("mp-show");
+			$('body').removeClass("mp-modal-open");
+		});
+		
+		$( document ).on( 'keydown', function ( e ) {
+			if ( e.keyCode === 27 ) { // ESC
+				$('#ageconfirm .mp-modal').removeClass("mp-show");
+				$('body').removeClass("mp-modal-open");
+			}
+		});
+		{% endif %}
+
+		$(document).ready(function () {
+			$('#ageconfirm .mp-modal').addClass("mp-show");
+			$('body').addClass("mp-modal-open");
+		});
+	</script>
+	<style type="text/css">
+		#ageconfirm .mp-content{
+			{% if border_width %}
+				border-width:{{ border_width }}px; 
+				border-color:  {{ border_color }};
+				border-style: solid;
+			{% endif %}
+
+			{% if background_color %}
+				background: {{ background_color }};
+			{% endif %}
+
+			{% if backimage %}
+				background-image: url('{{ backimage }}');
+				background-size: 100% 100%;
+				background-repeat: no-repeat;
+			{% endif %}
+			position: relative;
+	  		}
+
+			{% if backimage %}
+			  	#ageconfirm .bg-overlay{
+				   position: absolute;
+				   height: 100%;
+				   width: 100%; 
+				   background: rgba(0,0,0,0.7);
+				   top: 0;
+				   border-radius: 50%;
+				}
+			{% endif %}
+
+			{% if shape == 'CIRCLE' %}
+			  #ageconfirm .mp-content{
+					border-radius: 50%;
+					border-width: {{ border_width }}px; 
+					border-color: {{ border_color }};
+					border-style: solid;
+			  }
+			   #ageconfirm .bg-overlay{
+			  		border-radius: 50%;
+			  }
+		  	{% endif %}
+
+	  	{% if text_color %}
+	  		#ageconfirm .modal-title, #ageconfirm .description p, #ageconfirm .check i{
+	  		color : {{ text_color }};
+	  	}
+	  	#ageconfirm .description h1, #ageconfirm .description h2, #ageconfirm .description h3, #ageconfirm .description h4, #ageconfirm .description h5, #ageconfirm .description h6{
+	  		color : {{ text_color }};
+	  	}
+	  	{% endif %}
+	  	{{ custom_css }}
+	</style>
+</div>
+<!-- Age Verification Modal Popup Ends -->

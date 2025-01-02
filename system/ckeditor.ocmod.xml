@@ -1,0 +1,401 @@
+<modification>
+  <name>CKEditor 4+ (4.8.0)</name>
+  <code>ckeditortwoplus</code>
+  <version>1.4.1</version>
+  <author>◘ Dotbox Creative</author>
+  <link>http://dotbox.eu/</link>
+  
+  <file path="admin/view/template/common/header.twig">
+    <operation>
+      <search><![CDATA[</head>]]></search>
+      <add position="before"><![CDATA[
+        {% if ckeditorplus_status %}
+                {% if ckeditorplus_enhanced %}
+                <script type="text/javascript" src="view/javascript/ckeditor/ckeditor_enhanced.js"></script>
+                  {% if disabled_code %}
+                      <script type="text/javascript">
+                      CKEDITOR.config.removePlugins = 'codemirror';
+                      </script> 
+                  {% endif %}
+                  {% if dis_enhanced_images %}
+                      <script type="text/javascript">
+                      CKEDITOR.config.removePlugins = 'image2';
+                      </script> 
+                  {% endif %}
+                {% else %}
+                      <script type="text/javascript" src="view/javascript/ckeditor/ckeditor.js"></script> 
+                {% endif %}
+        {% endif %}
+]]></add>
+    </operation>
+  </file>
+  <file path="admin/controller/common/header.php">
+    <operation>
+      <search><![CDATA[return $this->load->view(]]></search>
+      <add position="before"><![CDATA[
+      if($this->config->get('ckeditorplus_status')){
+      $data['ckeditorplus_status'] = $this->config->get('ckeditorplus_status');
+      } else {
+      $data['ckeditorplus_status'] = 0; 
+      } 
+      if($this->config->get('ckeditorplus_enhanced')){
+      $data['ckeditorplus_enhanced'] = $this->config->get('ckeditorplus_enhanced');
+      } else {
+      $data['ckeditorplus_enhanced'] = 0; 
+      }
+
+      $disabled_routes = array('module/journal2');
+      $data['disabled_code'] = false;
+      if (isset($_GET['route'])) {
+          if (in_array($_GET['route'],$disabled_routes)) { 
+             $data['disabled_code'] = true;
+          } 
+      }
+
+      $data['dis_enhanced_images'] = true;
+      if($this->config->get('ckeditorplus_en_img')){
+         $data['dis_enhanced_images'] = false;
+      }
+
+]]></add>
+    </operation>
+  </file>
+
+  
+  <file path="admin/controller/common/filemanager.php">
+    <operation>
+      <search><![CDATA[$pagination = new Pagination();]]></search>
+      <add position="before"><![CDATA[  
+        $data['ckeditorplus_status'] = 0;
+              if ($this->config->get('ckeditorplus_status')) {
+                  $data['ckeditorplus_status'] = $this->config->get('ckeditorplus_status');
+              } 
+    ]]></add>
+    </operation>
+  </file>
+  <file path="admin/controller/common/filemanager.php">
+    <operation>
+      <search><![CDATA[{jpg,jpeg,png,gif,JPG,JPEG,PNG,GIF}]]></search>
+      <add position="replace"><![CDATA[{jpg,jpeg,png,gif,JPG,JPEG,PNG,GIF,pdf,PDF}]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA[$this->model_tool_image->resize(utf8_substr($image, utf8_strlen(DIR_IMAGE)), 100, 100)]]></search>
+      <add position="replace"><![CDATA[(strrchr($image, '.') != ".pdf") ? $this->model_tool_image->resize(utf8_substr($image, utf8_strlen(DIR_IMAGE)), 100, 100) : $this->model_tool_image->resize('pdf_icon.png', 100, 100)]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA['png']]></search>
+      <add position="after"><![CDATA[,'pdf']]></add>
+    </operation>
+    <operation>
+      <search><![CDATA['image/gif']]></search>
+      <add position="after"><![CDATA[,'application/pdf', 'application/force-download']]></add>
+    </operation>
+  </file>
+
+  <file path="admin/view/template/common/filemanager.twig">
+    <operation>
+      <search limit="1" index="0"><![CDATA[{% if target %}]]></search>
+      <add position="replace"><![CDATA[  
+      {% if ckeditorplus_status %}  
+        {% if target %}
+        $('a.thumbnail').on('click', function(e) {
+          e.preventDefault();
+
+          
+          {% if thumb %}
+          $('#{{ thumb }}').find('img').attr('src', $(this).find('img').attr('src'));
+          {% endif %}
+
+          $('#{{ target }}').attr('value', $(this).parent().find('input').attr('value'));
+
+          $('#modal-image').modal('hide');
+        });
+        {% else %}
+          // Get the current selection
+          
+          var sel = window.getSelection && window.getSelection();
+              if (sel && sel.rangeCount > 0) {
+                 var range = window.getSelection().getRangeAt(0);
+              } else {
+                 var range = document.createRange();
+              }
+        
+          var node = range.startContainer;
+          var startOffset = range.startOffset;  // where the range starts
+          var endOffset = range.endOffset;      // where the range ends
+
+          $('a.thumbnail').on('click', function(e) {
+            e.preventDefault();
+              // Create a new range from the orginal selection
+              var range = document.createRange();
+              range.setStart(node, startOffset);
+              range.setEnd(node, endOffset);
+
+              var img = document.createElement('img');
+              img.src = $(this).attr('href');
+                    {% if ckeditorplus_status %}
+
+                      var urlelement = "";
+                      var obj_target = 'info';
+                      if (CKEDITOR.dialog.getCurrent()) {
+                        dialog = CKEDITOR.dialog.getCurrent();
+                        link = this.getAttribute('href');
+                        if (dialog.getContentElement('info', 'txtUrl')) {
+                          urlelement = 'txtUrl';
+                          obj_target = 'info';
+                        };
+                        if (dialog.getContentElement('info', 'src')) {
+                          urlelement = 'src';
+                          obj_target = 'info';
+                        };
+                        if (dialog.getContentElement('info', 'url')) {
+                          urlelement = 'url';
+                          obj_target = 'info';
+                        };
+                        if (dialog.getContentElement('slideshowinfoid', 'txturlid')) {
+                          urlelement = 'txturlid';
+                          obj_target = 'slideshowinfoid';
+                        };
+
+                        console.log(urlelement);
+                        console.log(link);
+
+                        dialog.setValueOf(obj_target, urlelement, link);
+                        //dialog.setValueOf('tabId', 'elementId', 'Example' );
+                        //dialog.setValueof('info','txtUrl','http://google.com');
+                      };
+                    {% else %}
+                      range.insertNode(img);
+                    {% endif %}
+              
+
+            $('#modal-image').modal('hide');
+          });
+          {% endif %}
+      {% endif %}
+
+      {% if target and not ckeditorplus_status %}
+    ]]></add>
+    </operation>
+    <operation error="skip">
+      <search><![CDATA[var range = window.getSelection().getRangeAt(0);]]></search>
+      <add position="replace"><![CDATA[
+          var sel = window.getSelection && window.getSelection();
+              if (sel && sel.rangeCount > 0) {
+                 var range = window.getSelection().getRangeAt(0);
+              } else {
+                 var range = document.createRange();
+              }
+        ]]></add>
+    </operation>
+  </file>
+
+
+
+<!-- FILES -->
+
+<file path="admin/view/template/common/footer.twig"> 
+    <operation>
+      <search><![CDATA[<footer id="footer">]]></search>
+            <add position="before"><![CDATA[
+    {% if ckeditorplus_status %}            
+      <style type="text/css">
+        .cke_eval{z-index: 99999 !important}
+        .cke_button__image {background-color: #8FBB6C!important;}
+            </style>
+            <script>CKEDITOR.dtd.$removeEmpty.span = 0;</script>
+            <script type="text/javascript">
+              /*$(document).ready(function() {
+            setTimeout(function(){ 
+                  var checksummernoteclass = document.getElementsByClassName('note-editor');
+            if (checksummernoteclass.length > 0) {
+                setTimeout(function(){ 
+                      for(name in CKEDITOR.instances) {
+                      CKEDITOR.instances[name].destroy(true);
+                  }
+                for(var a in CKEDITOR.instances){CKEDITOR.remove(CKEDITOR.instances[a]);} 
+              }, 1000);
+            }
+          }, 1000);
+          });  */   
+           </script>
+
+
+
+<script type="text/javascript"><!--
+CKEDITOR.config.language='{{ ckeditorplus_language }}';
+CKEDITOR.config.skin='{{ ckeditorplus_skin }}';
+CKEDITOR.config.height='{{ ckeditorplus_height }}px';
+CKEDITOR.config.filebrowserBrowseUrl= '#';
+CKEDITOR.on('dialogDefinition', function (event)
+{
+  var editor = event.editor;
+  var dialogDefinition = event.data.definition;
+  var dialogName = event.data.name;
+  var tabCount = dialogDefinition.contents.length;
+  for (var i = 0; i < tabCount; i++) {
+    var browseButton = dialogDefinition.contents[i].get('browse');
+    if (browseButton !== null) {
+      browseButton.hidden = false;
+      browseButton.onClick = function() {
+        $('#modal-image').remove();
+        var target = this.filebrowser.target;
+        $.ajax({
+          url: 'index.php?route=common/filemanager&user_token={{ user_token }}',
+          dataType: 'html',
+          success: function(html) {
+            $('body').append('<div id="modal-image" class="modal cke_eval">' + html + '</div>');
+            $('#modal-image').modal('show');
+          }
+        });
+      }
+    }
+  }
+});
+//--></script>
+{% endif %}
+            ]]></add>
+    </operation>
+  </file>
+
+  <file path="admin/controller/common/footer.php">
+        <operation>
+            <search><![CDATA[return $this->load->view('common/footer', $data);]]></search>
+            <add position="before"><![CDATA[              
+              $data['ckeditorplus_language'] = 'en';
+              $data['ckeditorplus_skin'] = 'kama';
+              $data['ckeditorplus_status'] = 0;
+              $data['ckeditorplus_height'] = $this->config->get('ckeditorplus_height') ? $this->config->get('ckeditorplus_height') : '300';
+
+              if (isset($this->session->data['user_token'])) {
+                $data['user_token'] = $this->session->data['user_token'];
+              } else {
+                $data['user_token'] = "";
+              }
+              
+              if ($this->config->get('ckeditorplus_status')) {
+                  $data['ckeditorplus_status'] = $this->config->get('ckeditorplus_status');
+                  if ($this->config->get('ckeditorplus_language')) {$data['ckeditorplus_language'] = $this->config->get('ckeditorplus_language');}
+                  if ($this->config->get('ckeditorplus_skin')) {$data['ckeditorplus_skin'] = $this->config->get('ckeditorplus_skin');}
+              } 
+            ]]></add>
+        </operation>
+    </file>   
+
+
+  <file path="admin/view/template/catalog/product_form.twig">
+    <operation>
+      <search><![CDATA[data-toggle="summernote" data-lang="{{ summernote }}" class="form-control"]]></search>
+      <add position="replace"><![CDATA[data-toggle="ckeditor" data-lang="{{ ckeditor }}" class="form-control ckeditor"]]></add>
+    </operation>
+  </file>
+
+  <file path="admin/view/template/catalog/category_form.twig">
+    <operation>
+       <search><![CDATA[data-toggle="summernote" data-lang="{{ summernote }}" class="form-control"]]></search>
+      <add position="replace"><![CDATA[data-toggle="ckeditor" data-lang="{{ ckeditor }}" class="form-control ckeditor"]]></add>
+    </operation>
+  </file>
+
+  <file path="admin/view/template/catalog/information_form.twig">
+    <operation>
+       <search><![CDATA[data-toggle="summernote" data-lang="{{ summernote }}" class="form-control"]]></search>
+      <add position="replace"><![CDATA[data-toggle="ckeditor" data-lang="{{ ckeditor }}" class="form-control ckeditor"]]></add>
+    </operation>
+  </file>
+  
+  <file path="admin/view/template/extension/module/html.twig">
+    <operation>
+      <search><![CDATA[data-toggle="summernote" data-lang="{{ summernote }}" class="form-control"]]></search>
+      <add position="replace"><![CDATA[data-toggle="ckeditor" data-lang="{{ ckeditor }}" class="form-control ckeditor"]]></add>
+    </operation>
+  </file>
+
+  <file path="admin/view/template/marketing/contact.twig">
+    <operation>
+      <search><![CDATA[data-toggle="summernote" data-lang="{{ summernote }}" class="form-control"]]></search>
+      <add position="replace"><![CDATA[data-toggle="ckeditor" data-lang="{{ ckeditor }}" class="form-control ckeditor"]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA[{{ footer }}]]></search>
+      <add position="before"><![CDATA[
+{% if ckeditorplus_status %}
+<script type="text/javascript"><!--
+maileditor = CKEDITOR.replace('input-message', {
+language: '{{ ckeditorplus_language }}',
+skin : '{{ ckeditorplus_skin }}',
+height : '{{ ckeditorplus_height }}px'
+});
+CKEDITOR.on('dialogDefinition', function (event)
+    {
+        var editor = event.editor;
+        var dialogDefinition = event.data.definition;
+        var dialogName = event.data.name;
+        var tabCount = dialogDefinition.contents.length;
+        for (var i = 0; i < tabCount; i++) {
+            var browseButton = dialogDefinition.contents[i].get('browse');
+            if (browseButton !== null) {
+                browseButton.hidden = false;
+                browseButton.onClick = function() {
+          $('#modal-image').remove();
+           var target = this.filebrowser.target;
+          $.ajax({
+            url: 'index.php?route=common/filemanager&user_token={{ user_token }}',
+            dataType: 'html',
+                    cache: false,
+                    contentType: false,
+                    processData: true,
+            success: function(html) {
+                  $('body').append('<div id="modal-image" class="modal cke_eval">' + html + '</div>');
+                  $('#modal-image').modal('show');
+            }
+          }); 
+        }
+            }
+        }
+    });
+maileditor.on('change', function(event) {
+    $('textarea[name=\'message\']').html(event.editor.getData());
+});
+//--></script>
+{% endif %}
+]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA[$('textarea[name=\'message\']').val($('#input-message').code());]]></search>
+      <add position="replace"><![CDATA[
+           {% if ckeditorplus_status %}
+                //$('textarea[name=\'message\']').val($('#input-message').code());
+          {% else %}
+                $('textarea[name=\'message\']').val($('#input-message').code());
+          {% endif %}       
+        ]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA[$('textarea[name=\'message\']').html($('#input-message').code());]]></search>
+      <add position="replace"><![CDATA[
+           {% if ckeditorplus_status %}
+                //$('textarea[name=\'message\']').html($('#input-message').code());
+          {% else %}
+                $('textarea[name=\'message\']').html($('#input-message').code());
+          {% endif %}       
+        ]]></add>
+    </operation>
+  </file>
+  <file path="admin/controller/marketing/contact.php">
+        <operation>
+            <search><![CDATA[$data['header'] = $this->load->controller('common/header');]]></search>
+            <add position="before"><![CDATA[  
+              $data['ckeditorplus_language'] = 'en';
+              $data['ckeditorplus_skin'] = 'kama';
+              $data['ckeditorplus_status'] = 0;
+        $data['ckeditorplus_height'] = $this->config->get('ckeditorplus_height') ? $this->config->get('ckeditorplus_height') : '300';
+              if ($this->config->get('ckeditorplus_status')) {
+                  $data['ckeditorplus_status'] = $this->config->get('ckeditorplus_status');               
+                  if ($this->config->get('ckeditorplus_language')) {$data['ckeditorplus_language'] = $this->config->get('ckeditorplus_language');}
+                  if ($this->config->get('ckeditorplus_skin')) {$data['ckeditorplus_skin'] = $this->config->get('ckeditorplus_skin');}
+              } 
+            ]]></add>
+        </operation>
+    </file>   
+</modification>

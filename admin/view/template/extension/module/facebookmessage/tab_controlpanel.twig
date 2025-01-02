@@ -1,0 +1,127 @@
+<div class="container-fluid">
+    <div class="row {{ error_name ? 'has-error' }}">
+        <div class="col-md-3">
+            <h5><strong><span class="required">* </span>{{ module_name }}</strong></h5>
+            <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ module_name_help }}</span>
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="name" value="{{ name }}" placeholder="{{ module_name }}" class="form-control number" />
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-3">
+            <h5><strong><span class="required">* </span>{{ text_status }}</strong></h5>
+            <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_status_help }}</span>
+        </div>
+        <div class="col-md-3">
+            <select id="Checker" name="status" class="form-control">
+                {% if (status) %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+            </select>
+        </div>
+    </div>
+    <hr>
+    <div class="row {{ error_page_id ? 'has-error' }}">
+        <div class="col-md-3">
+            <h5><strong><span class="required">* </span>{{ text_fb_page_id }}</strong></h5>
+            <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_fb_page_id_help }}</span>
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="{{ moduleName }}[FacebookPageID]" value="{{ moduleData.FacebookPageID }}" placeholder="Facebook Page ID" class="form-control number" />
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-3">
+            <h5><strong>{{ text_custom_color_status }}</strong></h5>
+        </div>
+        <div class="col-md-3">
+            <select id="colorStatus" name="{{ moduleName }}[ColorStatus]" class="form-control">
+                <option value="default" {{ not moduleData.ColorStatus or moduleData.ColorStatus == 'default' ? 'selected="selected"' }}>{{ text_default }}</option>
+                <option value="custom" {{ moduleData.ColorStatus == 'custom' ? 'selected="selected"' }}>{{ text_custom }}</option>
+            </select>
+        </div>
+    </div>
+    <div class="colorStatusToggle">
+        <hr>
+        <div class="row">
+            <div class="col-md-3">
+                <h5><strong>{{ text_custom_color }}</strong></h5>
+                <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_custom_color_help }}</span>
+            </div>
+            <div class="col-md-2">
+                <input id="customColor" class="form-control number minicolors" type="text" name="{{ moduleName }}[CustomColor]" value="{{ moduleData.CustomColor ?: '#0077ff' }}" placeholder="Pick color" />
+            </div>
+            <div class="col-md-2">
+                <svg id="fbfloat" width="60px" height="60px" viewBox="0 0 60 60"><svg x="0" y="0" width="60" height="60"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g><g><circle id="fbfloatbubble" fill="{{ moduleData.CustomColor ?: '#0077ff' }}" cx="30" cy="30" r="30"></circle><g transform="translate(10.000000, 11.000000)" fill="#FFFFFF"><path d="M0,18.7150914 C0,8.37723141 8.956743,0 20,0 C31.043257,0 40,8.37723141 40,18.7150914 C40,29.0529515 31.043257,37.4301829 20,37.4301829 C18,37.4301829 16.0763359,37.1551856 14.2544529,36.6459314 L6.95652174,40 L6.95652174,33.0434783 C2.44929143,29.6044708 0,24.5969773 0,18.7150914 Z M16.9276495,19.6993886 L22.109375,25.0798234 L33.0434783,13.4782609 L23.0672554,18.9962636 L17.890625,13.6158288 L6.95652174,25.2173913 L16.9276495,19.6993886 Z"></path></g></g></g></g></svg></svg>
+                <script>
+                $(document).ready(function() {
+                    $('INPUT.minicolors').minicolors({
+                        control: 'hue',
+                        defaultValue: '#0077ff',
+                        theme: 'bootstrap',
+                        change: function(value, opacity) {
+                            if( !value ) return;
+                            fbfloatbubble.style.fill = value;
+                        },
+                    });
+                });
+                </script>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-3">
+            <h5><strong>{{ text_greeting_logged_in }}</strong></h5>
+            <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_greeting_logged_in_help }}</span>
+        </div>
+        <div class="col-md-9">
+            {% for language in languages %}
+                <div class="input-group">
+                    <span class="input-group-addon"><img src="{{ language.flag_url }} " title="{{ language.name }} "></span>
+                    <input type="text" class="form-control" name="{{ moduleName }}[GreetingIn][{{ language.language_id }}]" value="{{ moduleData.GreetingIn[language.language_id] ?: 'Hi! How can we help you?' }}" />
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-3">
+            <h5><strong>{{ text_greeting_logged_out }}</strong></h5>
+            <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_greeting_logged_out_help }}</span>
+        </div>
+        <div class="col-md-9">
+            {% for language in languages %}
+                <div class="input-group">
+                    <span class="input-group-addon"><img src="{{ language.flag_url }} " title="{{ language.name }} "></span>
+                    <input type="text" class="form-control" name="{{ moduleName }}[GreetingOut][{{ language.language_id }}]" value="{{ moduleData.GreetingOut[language.language_id] ?: 'Hi! We\'re here to answer any question you may have.' }}" />
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-3">
+            <h5><strong><span class="required">* </span>{{ text_mobile_enable }}</strong></h5>
+            <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_mobile_enable_help }}</span>
+        </div>
+        <div class="col-md-3">
+            <select name="{{ moduleName }}[EnableForMobile]" class="form-control">
+                <option value="1" {{ moduleData.EnableForMobile ? 'selected=selected' }}>{{ text_enabled }}</option>
+                <option value="0" {{ moduleData.EnableForMobile is empty or not moduleData.EnableForMobile ? 'selected=selected' }}>{{ text_disabled }}</option>
+            </select>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    showHideStuff($('#colorStatus'), $('.colorStatusToggle'), 'custom');
+});
+</script>

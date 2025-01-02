@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+  <name>Skroutz Bestprice</name>
+  <code>itc_skroutz_bestprice</code>
+  <version>1.0</version>
+  <author>ITcore</author>
+  <link>http://www.itcore.gr</link>
+  <file path="admin/controller/catalog/product.php">
+    <operation error="skip">
+      <search><![CDATA[if (isset($this->request->post['mpn'])) {]]></search>
+      <add position="before"><![CDATA[
+        $data['skroutz_status'] = $this->config->get('feed_skroutz_status');
+        $data['bestprice_status'] = $this->config->get('feed_bestprice_status');
+
+        if (isset($this->request->post['skroutz'])) {
+    			$data['skroutz'] = $this->request->post['skroutz'];
+    		} elseif (!empty($product_info) && isset($product_info['skroutz'])) {
+    			$data['skroutz'] = $product_info['skroutz'];
+    		} else {
+    			$data['skroutz'] = '1';
+    		}
+
+        if (isset($this->request->post['bestprice'])) {
+    			$data['bestprice'] = $this->request->post['bestprice'];
+    		} elseif (!empty($product_info) && isset($product_info['bestprice'])) {
+    			$data['bestprice'] = $product_info['bestprice'];
+    		} else {
+    			$data['bestprice'] = '1';
+    		}
+
+        if (isset($this->request->post['bestprice_image'])) {
+    			$data['bestprice_image'] = $this->request->post['bestprice_image'];
+    		} elseif (!empty($product_info) && isset($product_info['bestprice_image'])) {
+    			$data['bestprice_image'] = $product_info['bestprice_image'];
+    		} else {
+    			$data['bestprice_image'] = '';
+    		}
+        if (isset($this->request->post['skroutz_image'])) {
+    			$data['skroutz_image'] = $this->request->post['skroutz_image'];
+    		} elseif (!empty($product_info) && isset($product_info['skroutz_image'])) {
+    			$data['skroutz_image'] = $product_info['skroutz_image'];
+    		} else {
+    			$data['skroutz_image'] = '';
+    		}
+      ]]></add>
+    </operation>
+    <operation error="log">
+      <search><![CDATA[if (isset($this->request->post['image']) && is_file(DIR_IMAGE . $this->request->post['image'])) {]]></search>
+      <add position="before"><![CDATA[
+        if (isset($this->request->post['skroutz_image']) && is_file(DIR_IMAGE . $this->request->post['skroutz_image'])) {
+    			$data['skroutz_thumb'] = $this->model_tool_image->resize($this->request->post['skroutz_image'], 100, 100);
+    		} elseif (!empty($product_info) && isset($product_info['skroutz_image']) && is_file(DIR_IMAGE . $product_info['skroutz_image'])) {
+    			$data['skroutz_thumb'] = $this->model_tool_image->resize($product_info['skroutz_image'], 100, 100);
+    		} else {
+    			$data['skroutz_thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+    		}
+
+        if (isset($this->request->post['bestprice_image']) && is_file(DIR_IMAGE . $this->request->post['bestprice_image'])) {
+    			$data['bestprice_thumb'] = $this->model_tool_image->resize($this->request->post['bestprice_image'], 100, 100);
+    		} elseif (!empty($product_info) && isset($product_info['bestprice_image']) && is_file(DIR_IMAGE . $product_info['bestprice_image'])) {
+    			$data['bestprice_thumb'] = $this->model_tool_image->resize($product_info['bestprice_image'], 100, 100);
+    		} else {
+    			$data['bestprice_thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+    		}
+			$data['default_option_skroutz_thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+        ]]></add>
+    </operation>
+    <operation error="log">
+        <search><![CDATA[protected function getForm() {]]></search>
+        <add position="after"><![CDATA[
+          $this->model_catalog_product->checkImageRow();
+          ]]></add>
+    </operation>
+    <operation error="log">
+        <search><![CDATA[$this->load->model('tool/image');]]></search>
+        <add position="replace"><![CDATA[
+          if(!is_object($this->model_tool_image)){
+            $this->load->model('tool/image');
+          }
+          ]]></add>
+    </operation>
+    <operation error="skip">
+      <search><![CDATA[$data['product_options'] = array();]]></search>
+      <add position="after"><![CDATA[
+        if(!is_object($this->model_tool_image)){
+          $this->load->model('tool/image');
+        }
+        ]]></add>
+    </operation>
+    <operation error="skip">
+      <search><![CDATA[$product_option_value_data[] = array(]]></search>
+      <add position="before"><![CDATA[
+        if(!is_object($this->model_tool_image->resize)){
+          $this->load->model('tool/image');
+        }
+        if (isset($product_option_value['option_skroutz_image']) && is_file(DIR_IMAGE . $product_option_value['option_skroutz_image'])) {
+          $data['option_skroutz_thumb'] = $this->model_tool_image->resize($product_option_value['option_skroutz_image'], 100, 100);
+        } else {
+          $data['option_skroutz_thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+        }
+
+        ]]></add>
+    </operation>
+    <operation error="skip">
+      <search><![CDATA[$product_option_value_data[] = array(]]></search>
+      <add position="after"><![CDATA[
+        'option_skroutz_thumb'	=> $data['option_skroutz_thumb'],
+        'option_skroutz_image'	=> $product_option_value['option_skroutz_image'],
+        ]]></add>
+    </operation>
+  </file>
+  <file path="admin/view/template/catalog/product_form.twig">
+    <operation error="log">
+      <search><![CDATA[{{ footer }}]]></search>
+      <add position="before"><![CDATA[
+        <script type="text/javascript"><!--
+        $(document).ready(function(){
+            var tabhtml = '<li><a href="#tab-feeds" data-toggle="tab">Skroutz-Bestprice</a></li>';
+            $('ul.nav-tabs:first').append(tabhtml);
+        });
+        //--></script>
+      ]]></add>
+    </operation>
+      <operation error="log">
+        <search><![CDATA[<div class="tab-pane" id="tab-design">]]></search>
+        <add position="before"><![CDATA[
+            	<div class="tab-pane" id="tab-feeds">
+                <ul class="nav nav-tabs" id="language">
+                  <li class="active"><a href="#tab-skroutz" data-toggle="tab" aria-expanded="true">Skroutz</a></li>
+                  <li><a href="#tab-bestprice" data-toggle="tab" aria-expanded="true">Bestprice</a></li>
+                </ul>
+                <div class="tab-content">
+                  <div class="tab-pane active" id="tab-skroutz">
+                    {% if not skroutz_status %}
+                      <div class="alert alert-danger"><i class="fa fa-info-circle"></i> {{ feed_not_installed }} </div>
+                    {% endif %}
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label" for="input-skroutz">Skroutz</label>
+                      <div class="col-sm-10">
+                        <label class="radio-inline"> {% if skroutz %}
+                          <input type="radio" name="skroutz" value="1" checked="checked" />
+                          {{ text_yes }}
+                          {% else %}
+                          <input type="radio" name="skroutz" value="1" />
+                          {{ text_yes }}
+                          {% endif %} </label>
+                        <label class="radio-inline"> {% if not skroutz %}
+                          <input type="radio" name="skroutz" value="0" checked="checked" />
+                          {{ text_no }}
+                          {% else %}
+                          <input type="radio" name="skroutz" value="0" />
+                          {{ text_no }}
+                          {% endif %} </label>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label" for="input-skroutz">Skroutz Image</label>
+                      <div class="col-sm-10">
+                        <a href="" id="thumb-skroutz-image" data-toggle="image" class="img-thumbnail"><img src="{{ skroutz_thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>
+                        <input type="hidden" name="skroutz_image" value="{{ skroutz_image }}" id="input-skroutz-image" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="tab-bestprice">
+                    {% if not bestprice_status %}
+                      <div class="alert alert-danger"><i class="fa fa-info-circle"></i> {{ feed_not_installed }} </div>
+                    {% endif %}
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label" for="input-bestprice">Bestprice</label>
+                      <div class="col-sm-10">
+                        <label class="radio-inline"> {% if bestprice %}
+                          <input type="radio" name="bestprice" value="1" checked="checked" />
+                          {{ text_yes }}
+                          {% else %}
+                          <input type="radio" name="bestprice" value="1" />
+                          {{ text_yes }}
+                          {% endif %} </label>
+                        <label class="radio-inline"> {% if not bestprice %}
+                          <input type="radio" name="bestprice" value="0" checked="checked" />
+                          {{ text_no }}
+                          {% else %}
+                          <input type="radio" name="bestprice" value="0" />
+                          {{ text_no }}
+                          {% endif %} </label>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label" for="input-bestprice-image">Bestprice Image</label>
+                      <div class="col-sm-10">
+                        <a href="" id="thumb-bestprice-image" data-toggle="image" class="img-thumbnail"><img src="{{ bestprice_thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>
+                        <input type="hidden" name="bestprice_image" value="{{ bestprice_image }}" id="input-bestprice-image" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        ]]></add>
+      </operation>
+      <operation error="log">
+        <search index="0"><![CDATA[<td class="text-right">{{ entry_quantity }}</td>]]></search>
+        <add position="after"><![CDATA[
+          <td class="text-right">{{ entry_option_image }}</td>
+          ]]></add>
+      </operation>
+      <operation error="log">
+        <search><![CDATA[html += '        <td class="text-right">{{ entry_quantity }}</td>';]]></search>
+        <add position="after"><![CDATA[
+          html += '        <td class="text-right">{{ entry_option_image }}</td>';
+          ]]></add>
+      </operation>
+      <operation error="log">
+          <search><![CDATA[html += '        <td colspan="6"></td>';]]></search>
+          <add position="replace"><![CDATA[html += '        <td colspan="7"></td>';]]></add>
+      </operation>
+      <operation error="log">
+        <search><![CDATA[<td class="text-right"><input type="text" name="product_option[{{ option_row }}][product_option_value][{{ option_value_row }}][quantity]"]]></search>
+        <add position="after"><![CDATA[
+          <td>
+            <a href="" id="thumb-skroutz-image_{{ option_row }}_{{ option_value_row }}" data-toggle="image" class="img-thumbnail"><img src="{{ product_option_value.option_skroutz_thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>
+            <input type="hidden" name="product_option[{{ option_row }}][product_option_value][{{ option_value_row }}][option_skroutz_image]" value="{{ product_option_value.option_skroutz_image }}" id="input-skroutz-image_{{ option_row }}_{{ option_value_row }}" />
+          </td>
+          ]]></add>
+      </operation>
+      <operation error="skip">
+        <search><![CDATA[product_option[' + option_row + '][product_option_value][' + option_value_row + '][quantity]]]></search>
+        <add position="after"><![CDATA[
+          html += '<td><a href="" id="thumb-skroutz-image_'+option_row+'_'+option_value_row+'" data-toggle="image" class="img-thumbnail"><img src="{{ default_option_skroutz_thumb }}" alt="" title="" /></a>';
+          html +='<input type="hidden" name="product_option['+option_row+'][product_option_value]['+option_value_row+'][option_skroutz_image]" value="" id="input-skroutz-image_'+ option_row +'_'+option_value_row+'" /></td>';
+          ]]></add>
+        </operation>
+    </file>
+		<file path="catalog/model/catalog/product.php">
+			<operation error="log">
+				<search><![CDATA[$product_option_value_data[] = array(]]></search>
+				<add position="after"><![CDATA[
+					'option_skroutz_image' => $product_option_value['option_skroutz_image'],
+				]]></add>
+			</operation>
+    </file>
+    <file path="admin/model/catalog/product.php">
+      <operation error="skip">
+        <search><![CDATA[$product_id = $this->db->getLastId();]]></search>
+        <add position="after"><![CDATA[
+          if($this->config->get('feed_skroutz_status')){
+            if(isset($data['skroutz'])){
+              $this->db->query("UPDATE ".DB_PREFIX."product set skroutz='".(int)$data['skroutz']."' WHERE product_id='".(int)$product_id."'");
+            }
+            if(isset($data['skroutz_image'])){
+              $this->db->query("UPDATE ".DB_PREFIX."product set skroutz_image='".$data['skroutz_image']."' WHERE product_id='".(int)$product_id."'");
+            }
+          }
+          if($this->config->get('feed_bestprice_status')){
+            if(isset($data['bestprice'])){
+              $this->db->query("UPDATE ".DB_PREFIX."product set bestprice='".(int)$data['bestprice']."' WHERE product_id='".(int)$product_id."'");
+            }
+            if(isset($data['bestprice_image'])){
+              $this->db->query("UPDATE ".DB_PREFIX."product set bestprice_image='".$data['bestprice_image']."' WHERE product_id='".(int)$product_id."'");
+            }
+          }
+        ]]></add>
+      </operation>
+      <operation error="skip">
+        <search><![CDATA[$this->db->query("UPDATE " . DB_PREFIX . "product SET model =]]></search>
+        <add position="after"><![CDATA[
+          if($this->config->get('feed_skroutz_status')){
+            if(isset($data['skroutz'])){
+              $this->db->query("UPDATE ".DB_PREFIX."product set skroutz='".(int)$data['skroutz']."' WHERE product_id='".(int)$product_id."'");
+            }
+            if(isset($data['skroutz_image'])){
+              $this->db->query("UPDATE ".DB_PREFIX."product set skroutz_image='".$data['skroutz_image']."' WHERE product_id='".(int)$product_id."'");
+            }
+          }
+          if($this->config->get('feed_bestprice_status')){
+            if(isset($data['bestprice'])){
+              $this->db->query("UPDATE ".DB_PREFIX."product set bestprice='".(int)$data['bestprice']."' WHERE product_id='".(int)$product_id."'");
+            }
+            if(isset($data['bestprice_image'])){
+              $this->db->query("UPDATE ".DB_PREFIX."product set bestprice_image='".$data['bestprice_image']."' WHERE product_id='".(int)$product_id."'");
+            }
+          }
+        ]]></add>
+      </operation>
+      <operation error="log">
+        <search><![CDATA[public function addProduct($data) {]]></search>
+        <add position="before"><![CDATA[
+          public function checkImageRow(){
+            $q = $this->db->query("SHOW COLUMNS FROM " . DB_PREFIX . "product_option_value like 'option_skroutz_image'");
+            if($q->num_rows == 0){
+                $this->db->query("ALTER TABLE ".DB_PREFIX."product_option_value add option_skroutz_image varchar(255) NOT NULL DEFAULT ''");
+            }
+          }
+        ]]></add>
+      </operation>
+      <operation error="log">
+          <search><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "product_option_value SET]]></search>
+          <add position="replace"><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "product_option_value SET option_skroutz_image='".(isset($product_option_value['option_skroutz_image'])? $product_option_value['option_skroutz_image']:'')."', ]]></add>
+      </operation>
+      <operation error="log">
+          <search><![CDATA[$product_option_value_data[] = array(]]></search>
+          <add position="after"><![CDATA[
+						'option_skroutz_image' => $product_option_value['option_skroutz_image'],
+						]]></add>
+      </operation>
+    </file>
+    <file path="admin/language/*/catalog/product.php">
+      <operation error="skip">
+        <search><![CDATA[$_['heading_title']]]></search>
+        <add position="after"><![CDATA[
+// Skroutz-Bestprice
+$_['feed_not_installed']            = 'The feed is  not enabled, any changes you made in this  tab will not be saved.';
+$_['entry_option_image']    = 'Skroutz Image';
+          ]]></add>
+      </operation>
+    </file>
+</modification>

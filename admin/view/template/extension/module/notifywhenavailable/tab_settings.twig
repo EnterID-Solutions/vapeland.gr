@@ -1,0 +1,264 @@
+<table class="table">
+	<!-- Out-Of-Stock statuses -->
+	<tr>
+        <td class="col-xs-3">
+            <h5><strong>{{ text_stock_status }} </strong></h5> <span class="help"><i class="fa fa-info-circle"></i>&nbsp;</span>{{ text_stock_status_help }} </td>
+        <td>
+            <div class="col-xs-4">
+                {% for stock_status in stock_statuses %}
+                   <div class="checkbox">
+                      <label>
+                         <input type="checkbox" name="notifywhenavailable[stock_status][{{ stock_status.stock_status_id }}]" {{ (nwa_data.notifywhenavailable is not defined or (nwa_data.notifywhenavailable.stock_status[stock_status.stock_status_id] is defined and nwa_data.notifywhenavailable.stock_status[stock_status.stock_status_id] == 'on') ) ? 'checked="checked"'  : '' }}/> {{ stock_status.name }}
+                      </label>
+                   </div>
+                {% endfor %}
+            </div>
+        </td>
+    </tr>
+
+<!--End Customer Groups -->
+    <tr>
+        <td class="col-xs-3">
+            <h5><strong>{{ text_admin_notifications }}</strong></h5> <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_admin_notifications_help }}</span> </td>
+        <td>
+            <div class="col-xs-4">
+                <select name="notifywhenavailable[Notifications]" class="NotifyWhenAvailableNotifications form-control">
+                    <option value="yes" {{ (nwa_data.notifywhenavailable.Notifications is defined and nwa_data.notifywhenavailable.Notifications=='yes') ? 'selected=selected'  : ''  }}>{{ text_enabled }}</option>
+                    <option value="no" {{ (nwa_data.notifywhenavailable.Notifications is defined and nwa_data.notifywhenavailable.Notifications=='no') ? 'selected=selected'  : ''  }}>{{ text_disabled }}</option>
+                </select>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="col-xs-3">
+            <h5><strong>{{ text_button_options }}</strong></h5> <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_button_options_help }}</span>
+        </td>
+        <td>
+            <div class="col-xs-4">
+                <select name="notifywhenavailable[ReplaceAddToCart]" class="NotifyWhenAvailableNotifications form-control">
+                    <option value="1" {{ (nwa_data.notifywhenavailable.ReplaceAddToCart is defined and nwa_data.notifywhenavailable.ReplaceAddToCart=='1') ? 'selected=selected'  : ''  }}>{{ text_replace_cart }}</option>
+                    <option value="0" {{ (nwa_data.notifywhenavailable.ReplaceAddToCart is defined and nwa_data.notifywhenavailable.ReplaceAddToCart=='0') ? 'selected=selected'  : ''  }}>{{ text_new_button }}</option>
+                </select>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="col-xs-3">
+            <h5><strong>{{ text_captcha }}</strong></h5> <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_captcha_help }}</span>
+        </td>
+        <td>
+            <div class="col-xs-4">
+                <select name="notifywhenavailable[Captcha]" class="NotifyWhenAvailableNotifications form-control">
+                    <option value="yes" {{ (nwa_data.notifywhenavailable.Captcha is defined and nwa_data.notifywhenavailable.Captcha=='1') ? 'selected=selected'  : ''  }}>{{ text_enabled }}</option>
+                    <option value="no" {{ (nwa_data.notifywhenavailable.Captcha is defined and nwa_data.notifywhenavailable.Captcha=='0') ? 'selected=selected'  : ''  }}>{{ text_disabled }}</option>
+                </select>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="col-xs-3">
+            <h5><strong>{{ text_privacy_policy }}</strong></h5> <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_privacy_policy_help }}</span> </td>
+        </td>
+        <td>
+            <div class="col-xs-4">
+                <select name="notifywhenavailable[PrivacyPolicy]" class="NotifyWhenAvailableNotifications form-control">
+                    <option value="1" {{ nwa_data.notifywhenavailable.PrivacyPolicy == '1' ? 'selected=selected' : '' }}>{{ text_enabled }}</option>
+                    <option value="0" {{ nwa_data.notifywhenavailable.PrivacyPolicy is not defined or nwa_data.notifywhenavailable.PrivacyPolicy == '0' ? 'selected=selected' : '' }}>{{ text_disabled }}</option>
+                </select>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="col-xs-3">
+            <h5><strong>{{ text_popup_width }}</strong></h5> <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_popup_width_help }}</span> </td>
+        <td>
+            <div class="col-xs-3">
+                <div class="input-group">
+                    <input type="text" name="notifywhenavailable[PopupWidth]" class="NotifyWhenAvailablePopupWidth form-control" value="{{ (nwa_data.notifywhenavailable.PopupWidth is defined) ? nwa_data.notifywhenavailable.PopupWidth  : '300'  }}" /></input> <span class="input-group-addon">px</span> </div>
+            </div>
+        </td>
+    </tr>
+
+    <tr>
+    <td class="col-xs-3">
+            <h5><strong>{{ text_design }}</strong></h5> <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_design_help }}
+
+  </span> </td>
+        <td>
+            <div class="col-xs-12">
+                <ul class="nav nav-tabs">
+                    {% for language in languages %}
+                    <li {{ (loop.first) ? 'class="active"':'' }}><a href="#pouptab-{{ language.language_id }}" data-toggle="tab"><img src="{{ language.flag_url }}"/> {{ language.name }}</a> </li>
+                    {% endfor %}
+                </ul>
+                <div class="tab-content">
+                    {% for language in languages %}
+                    <div id="pouptab-{{ language.language_id }}" language-id="{{ language.language_id }}" class="row-fluid tab-pane language {{ (loop.first) ? 'active' : '' }}">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5><strong>{{ text_button_label }}</strong></h5> <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_button_label_help }}</span>
+                                <div class="input-group">
+                                    <input type="text" name="notifywhenavailable[ButtonLabel][{{ language.code }}]" class="NotifyWhenAvailableButtonLabel form-control" value="{{ (nwa_data.notifywhenavailable.ButtonLabel[language.code] is defined and nwa_data.notifywhenavailable.ButtonLabel[language.code] is not empty) ? nwa_data.notifywhenavailable.ButtonLabel[language.code]  : 'Notify Me!' }}" /></input>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5><strong>{{ text_popup_title }}</strong></h5>
+                                <div class="input-group">
+                                    <input name="notifywhenavailable[CustomTitle][{{ language.code }}]" class="NotifyWhenAvailableCustomTitle form-control" type="text" value="{{ (nwa_data.notifywhenavailable.CustomTitle[language.code] is defined) ? nwa_data.notifywhenavailable.CustomTitle[language.code]  : 'Out of stock!'  }}" /> </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <textarea class="summernote" id="description_{{ language.code }}" name="notifywhenavailable[CustomText][{{ language.code }}]" style="height:80px;" class="NotifyWhenAvailableCustomText form-control">
+                                    {% if (nwa_data.notifywhenavailable.CustomText[language.code] is defined) %}
+                                        {{ nwa_data.notifywhenavailable.CustomText[language.code] }}
+                                    {% else %}
+                                        <p align="left"><span style="line-height: 1.6em;">Fill your email below and we will notify you as soon as the product is back in stock!</span></p>
+                                        <p align="left">Name: {name_field}</p>
+                                        <p align="left">Email: {email_field}</p>
+										<p align="left">Comment: {comment_field}</p>
+										<p align="left">Captcha: {captcha}</p>
+                                        <p align="left">{submit_button}</p>
+                                    {% endif %}
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="col-xs-3">
+            <h5><strong>{{ text_notification_customer }}</strong></h5> <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_notification_customer_help }}</span> </td>
+        <td>
+            <div class="col-xs-4">
+                <select name="notifywhenavailable[CustomerNotification]" id="notifyCustomer" class="NotifyWhenAvailableNotifications form-control">
+                    <option value="yes" {{ (nwa_data.notifywhenavailable.CustomerNotification is defined and nwa_data.notifywhenavailable.CustomerNotification=='yes') ? 'selected=selected'  : ''  }}>{{ text_enabled }}</option>
+                    <option value="no" {{ (nwa_data.notifywhenavailable.CustomerNotification is defined and nwa_data.notifywhenavailable.CustomerNotification=='no') ? 'selected=selected'  : ''  }}>{{ text_disabled }}</option>
+                </select>
+            </div>
+        </td>
+    </tr>
+    <tr id="notificationEmailRow">
+          <td class="col-xs-3">
+                <h5><strong>{{ text_notification_mail }}</strong></h5> <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_notification_mail_help }}   </span>
+          </td>
+            <td>
+                <div class="col-xs-12">
+                    <ul class="nav nav-tabs">
+                        {% for language in languages %}
+                        <li {{ (loop.first) ? 'class="active"' : '' }}><a href="#emailtab-{{ language.language_id }}" data-toggle="tab"><img src="{{ language.flag_url }}"/> {{ language.name }}</a> </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="tab-content">
+                        {% for language in languages %}
+                        <div id="emailtab-{{ language.language_id }}" language-id="{{ language.language_id }}" class="row-fluid tab-pane language {{ (loop.first) ? 'active' : '' }}">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h5><strong>{{ text_notification_subject }}</strong></h5>
+                                    <input name="notifywhenavailable[NotificationEmailSubject][{{ language.language_id }}]" class="input-xxlarge form-control" type="text" value="{{ (nwa_data.notifywhenavailable.NotificationEmailSubject[language.language_id] is defined) ? nwa_data.notifywhenavailable.NotificationEmailSubject[language.language_id]  : 'We will notify you once the product is back in stock.'  }}" /> </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <textarea class="summernote" id="email_notification_text_{{ language.language_id }}" name="notifywhenavailable[NotificationEmailText][{{ language.language_id }}]" style="height:80px;" class="NotifyWhenAvailableEmailText form-control">
+                                        {% if (nwa_data.notifywhenavailable.NotificationEmailText[language.language_id] is defined) %}
+                                            {{ nwa_data.notifywhenavailable.NotificationEmailText[language.language_id] }}
+                                        {% else %}
+                                            <p align="center"><b>Hello, {name}!</b></p>
+                                            <p align="center">Thank you for your interest in {product_name}. We will notify you as soon as the product is back in stock!</p>
+                                        {% endif %}
+                                    </textarea>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+    <tr>
+        <td class="col-xs-3">
+            <h5><strong>{{ text_email_text }}</strong></h5><span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_email_text_help }}</span><br/> <br/><span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_email_text_help_sec }}</span> </td>
+        <td>
+            <div class="col-xs-12">
+                <ul class="nav nav-tabs">
+                    {% for language in languages %}
+                    <li {{ (loop.first) ? 'class="active"' : '' }}><a href="#instockemailtab-{{ language.language_id }}" data-toggle="tab"><img src="{{ language.flag_url }}"/> {{ language.name }}</a> </li>
+                    {% endfor %}
+                </ul>
+                <div class="tab-content">
+                    {% for language in languages %}
+                    <div id="instockemailtab-{{ language.language_id }}" language-id="{{ language.language_id }}" class="row-fluid tab-pane language {{ (loop.first) ? 'active' : '' }}">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5><strong>{{ text_email_subject }}</strong></h5>
+                                <input name="notifywhenavailable[EmailSubject][{{ language.code }}]" class="input-xxlarge form-control" type="text" value="{{ (nwa_data.notifywhenavailable.EmailSubject[language.code] is defined) ? nwa_data.notifywhenavailable.EmailSubject[language.code]  : 'The product is back in stock!'  }}" /> </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <textarea class="summernote" id="email_text_{{ language.code }}" name="notifywhenavailable[EmailText][{{ language.code }}]" style="height:80px;" class="NotifyWhenAvailableEmailText form-control">
+                                    {% if (nwa_data.notifywhenavailable.EmailText[language.code] is defined) %}
+                                        {{ nwa_data.notifywhenavailable.EmailText[language.code] }}
+                                    {% else %}
+                                        <p align="center"><b>Hello, {c_name}!</b></p>
+                                        <p align="center">We are happy to notify you that the product you were interested in, {p_name}&nbsp;is back in stock!</p>
+                                        <p align="center">{p_image}</p>
+                                        <p align="center"><strong>What are you waiting for?&nbsp;<a href="http://{p_link}" target="_blank">Order now</a>!</strong></p>
+                                    {% endif %}
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="col-xs-3">
+            <h5><strong>{{ text_custom_css }}</strong></h5> <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_custom_css_help }}</span> </td>
+        <td>
+            <div class="col-xs-4">
+                <textarea name="notifywhenavailable[CustomCSS]" class="NotifyWhenAvailableCustomCSS form-control">
+                    {{ (nwa_data.notifywhenavailable.CustomCSS is defined) ? nwa_data.notifywhenavailable.CustomCSS  : '' }}
+                </textarea>
+            </div>
+        </td>
+    </tr>
+</table>
+<script>
+ $(function() {
+    var $typeSelector = $('#notifyCustomer');
+    var $toggleArea = $('#notificationEmailRow');
+     if ($typeSelector.val() === 'yes') {
+            $toggleArea.show();
+        }
+        else {
+            $toggleArea.hide();
+        }
+    $typeSelector.change(function(){
+        if ($typeSelector.val() === 'yes') {
+            $toggleArea.show(400);
+        }
+        else {
+            $toggleArea.hide(400);
+        }
+    });
+    $('.summernote').summernote({
+        height: 300,
+        minHeight: null,
+        maxHeight: null,
+        focus: false
+    });
+});
+ </script>

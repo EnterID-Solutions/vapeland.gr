@@ -1,0 +1,51 @@
+{% if (status) %}
+
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  //Fix for IE 11
+  if (typeof Object.assign != 'function') {
+  Object.assign = function(target) {
+    'use strict';
+    if (target == null) {
+      throw new TypeError('Cannot convert undefined or null to object');
+    }
+
+    target = Object(target);
+    for (var index = 1; index < arguments.length; index++) {
+      var source = arguments[index];
+      if (source != null) {
+        for (var key in source) {
+          if (Object.prototype.hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
+        }
+      }
+    }
+    return target;
+  };
+}
+// End Fix
+  js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>
+    $(function() {
+
+        $(document).ready(function(){
+        var fb_html = '<div id="fb-root"></div><div class="fb-customerchat" page_id="{{ moduleSetting.FacebookPageID }}" theme_color="{{ moduleSetting.color }}" logged_in_greeting="{{ moduleSetting.GreetingIn[language_id]|escape('js') }}" logged_out_greeting="{{ moduleSetting.GreetingOut[language_id]|escape('js') }}"> </div>';
+
+        $('body').append(fb_html);
+        });
+    });
+</script>
+
+<style>
+    .fb_dialog {
+        bottom: 15% !important;
+    }
+</style>
+
+{% endif %}

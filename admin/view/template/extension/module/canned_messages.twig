@@ -1,0 +1,238 @@
+{{ header }} {{ column_left }} 
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %} 
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %} 
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+	    <div class="form-horizontal">
+		  <ul class="nav nav-tabs">
+			<li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+			{{ about }}
+		  </ul>
+		  <div class="tab-content">
+			<div class="tab-pane active" id="tab-general">
+			  <div id="add" class="well">
+			    <div class="row">
+				  <div class="col-sm-4">
+				    <div class="form-group">
+				      <label class="col-sm-4 control-label" for="input-name">{{ entry_name }}</label>
+				      <div class="col-sm-8">
+					    <input type="text" name="name" value="" placeholder="{{ entry_name  }}" id="input-name" class="form-control" />
+				      </div>
+				    </div>
+					<div class="form-group">
+				      <label class="col-sm-4 control-label" for="input-notify">{{ entry_notify }}</label>
+				      <div class="col-sm-8">
+					    <input type="checkbox" name="notify" value="1" id="input-notify" />
+				      </div>
+				    </div>
+					<div class="form-group">
+				      <label class="col-sm-4 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+				      <div class="col-sm-8">
+					    <input type="text" name="sort_order" value="" placeholder="{{ entry_sort_order  }}" id="input-sort-order" class="form-control" />
+				      </div>
+				    </div>
+				  </div>
+				  <div class="col-sm-8">
+				    <div class="form-group">
+				      <label class="col-sm-4 control-label" for="input-order-status">{{ entry_order_status }}</label>
+				      <div class="col-sm-8">
+					    <select name="order_status_id" id="input-order-status" class="form-control">
+						  {% for order_status in order_statuses %} 
+						  <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
+						  {% endfor %} 
+						</select>
+				      </div>
+				    </div>
+					<div class="form-group">
+				      <label class="col-sm-4 control-label" for="input-name">{{ entry_comment }}</label>
+				      <div class="col-sm-8">
+					    <textarea name="comment" class="form-control" rows="4"></textarea>
+				      </div>
+				    </div>
+					<div class="text-right">
+					  <button type="button" id="button-add" class="btn btn-success">{{ button_add }}</button>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			  <table class="table table-hover table-bordered table-striped">
+			    <thead>
+				<tr>
+				  <td class="text-left">{{ entry_name }}</td>
+				  <td class="text-left">{{ entry_notify }}</td>
+				  <td class="text-left">{{ entry_order_status }}</td>
+				  <td class="text-left">{{ entry_comment }}</td>
+				  <td class="text-right">{{ entry_sort_order }}</td>
+				  <td></td>
+				</tr>
+				</thead>
+				<tbody>
+				  {% if messages %} 
+				    {% for message in messages %} 
+				    <tr id="row-{{ message.canned_message_id }}">
+				      <td class="text-left">
+					    <div class="default">{{ message.name }}</div>
+						<div class="edit"><input type="text" name="name" value="{{ message.name }}" class="form-control" /></div>
+					  </td>
+				      <td class="text-left">
+					    <div class="default">{{ message.notify_text }}</div>
+						<div class="edit"><input type="checkbox" name="notify" value="1"{{ message.notify ? ' checked="checked"' }} /></div>
+					  </td>
+				      <td class="text-left">
+					    <div class="default">{{ message.order_status }}</div>
+						<div class="edit"><select name="order_status_id" class="form-control">{% for order_status in order_statuses %} 
+						  <option value="{{ order_status.order_status_id }}"{{ order_status.order_status_id == message.order_status_id ? ' selected="selected"' }}>{{ order_status.name }}</option>
+						  {% endfor %}</select></div>
+					  </td>
+				      <td class="text-left">
+					    <div class="default">{{ message.comment }}</div>
+						<div class="edit"><textarea name="comment" class="form-control" rows="5">{{ message.comment_raw }}</textarea></div>  
+					  </td>
+				      <td class="text-right">
+					    <div class="default">{{ message.sort_order }}</div>
+						<div class="edit"><input type="text" name="sort_order" value="{{ message.sort_order }}" class="form-control" /></div>  
+					  </td>
+					  <td class="text-right">
+					    <div class="default">
+					      <button type="button" class="btn btn-primary btn-xs" data-toggle="tooltip" title="{{ button_edit }}" onClick="confirmEdit('{{ message.canned_message_id }}');"><i class="fa fa-pencil"></i></button>
+					      <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" title="{{ button_delete }}" onClick="confirmDelete('{{ message.canned_message_id }}');"><i class="fa fa-trash"></i></button>
+					    </div>
+						<div class="edit">
+						  <button type="button" class="btn btn-success btn-xs" data-toggle="tooltip" title="{{ button_save }}" onClick="confirmSave('{{ message.canned_message_id }}');"><i class="fa fa-save"></i></button>
+						</div>
+					  </td>
+				    </tr>
+				    {% endfor %} 
+				   {% else %}   
+				    <tr>
+					  <td class="text-center" colspan="6">{{ text_no_results }}</td>
+					</tr>
+				   {% endif %}
+				</tbody>
+			  </table>
+			</div>
+			{{ tab }}
+		  </div>
+		</div>
+      </div>
+    </div>
+  </div>
+</div>
+<style type="text/css">
+.edit {
+	display: none;
+}
+</style>
+<script type="text/javascript"><!--//
+$('#button-add').on('click', function() {
+	$.ajax({
+		url: 'index.php?route=extension/module/canned_messages/add{{ equotix_token }}',
+		type: 'post',
+		data: $('#add input[type=\'text\'], #add input:checked, #add select, #add textarea'),
+		dataType: 'json',
+		beforeSend: function() {
+			$('#button-add').prop('disabled', true);
+			$('#button-add').after('<i class="fa fa-spinner fa-spin"></i>');
+		},
+		success: function(json) {
+			$('#button-add').prop('disabled', false);
+			$('.fa-spinner').remove();
+			
+			var html = '<tr>';
+			html += '<td class="text-left">' + $('#add  input[name=\'name\']').val() + '</td>';
+			
+			if ($('#add input[name=\'notify\']').prop('checked')) {
+				html += '<td class="text-left">{{ text_yes }}</td>';
+			} else {
+				html += '<td class="text-left">{{ text_no }}</td>';
+			}
+			
+			html += '<td class="text-left">' + $('#add option:selected').text() + '</td>';
+			html += '<td class="text-left">' + $('#add textarea').val() + '</td>';
+			html += '<td class="text-right">' + $('#add input[name=\'sort_order\']').val() + '</td>';
+			html += '<td class="text-right">{{ text_refresh }}</td>';
+			html += '</tr>';
+			
+			$('#add input[type=\'text\']').val('');
+			$('#add textarea').val('');
+			
+			$('#tab-general table tbody').prepend(html);
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+
+function confirmEdit(canned_message_id) {
+	$('#row-' + canned_message_id + ' .default').hide();
+	$('#row-' + canned_message_id + ' .edit').fadeIn();
+}
+
+function confirmSave(canned_message_id) {
+	if (!confirm('{{ text_are_you_sure }}')) {
+		return false;
+	}
+	
+	var element = $(this);
+	
+	$.ajax({
+		url: 'index.php?route=extension/module/canned_messages/edit{{ equotix_token }}&canned_message_id=' + canned_message_id,
+		type: 'post',
+		data: $('#row-' + canned_message_id + ' input[type=\'text\'], #row-' + canned_message_id + ' input:checked, #row-' + canned_message_id + ' select, #row-' + canned_message_id + ' textarea'),
+		dataType: 'json',
+		beforeSend: function() {
+			$('#row-' + canned_message_id + ' .edit button').prop('disabled', true);
+			$('#row-' + canned_message_id + ' .edit button').after('<i class="fa fa-spinner fa-spin"></i>');
+		},
+		success: function(json) {
+			$('#row-' + canned_message_id + ' .edit button').prop('disabled', false);
+			$('.fa-spinner').remove();
+			$('#row-' + canned_message_id + ' .edit button').html('<i class="fa fa-check-circle"></i>');
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+
+function confirmDelete(canned_message_id) {
+	if (!confirm('{{ text_are_you_sure }}')) {
+		return false;
+	}
+	
+	var element = $(this);
+	
+	$.ajax({
+		url: 'index.php?route=extension/module/canned_messages/delete{{ equotix_token }}&canned_message_id=' + canned_message_id,
+		type: 'get',
+		dataType: 'json',
+		beforeSend: function() {
+			element.prop('disabled', true);
+		},
+		success: function(json) {
+			$('#row-' + canned_message_id).remove();
+			$('.tooltip').remove();
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+//--></script>
+{{ footer }} 

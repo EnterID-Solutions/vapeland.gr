@@ -1,0 +1,101 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+	<div class="container-fluid">
+	  <div class="pull-right">
+		<button type="submit" form="form-skroutz-analytics" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-check-circle"></i></button>
+		<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+	  <h1>{{ heading_title }}</h1>
+	  <ul class="breadcrumb">
+		{% for breadcrumb in breadcrumbs %}
+			<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+		{% endfor %}
+	  </ul>
+	</div>
+  </div>
+  <div class="container-fluid">
+	{% if error_warning %}
+		<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+		  <button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+	{% endif %}
+	<div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ heading_title }}</h3>
+      </div>
+      <div class="panel-body">
+		<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-skroutz-analytics" class="form-horizontal">
+		  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="analytics_skroutz_analytics_status" id="input-status" class="form-control">
+				{% if analytics_skroutz_analytics_status %}
+					<option value="1" selected="selected">{{ text_enabled }}</option>
+					<option value="0">{{ text_disabled }}</option>
+				{% else %}
+					<option value="1">{{ text_enabled }}</option>
+					<option value="0" selected="selected">{{ text_disabled }}</option>
+				{% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-shop-account-id">{{ entry_shop_account_id }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="analytics_skroutz_analytics_shop_account_id" value="{{ analytics_skroutz_analytics_shop_account_id }}" placeholder="{{ entry_shop_account_id_placeholder }}" id="input-shop-account-id" class="form-control" />
+            </div>
+          </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-tax-class">{{ entry_tax_class }}</label>
+                <div class="col-sm-10">
+                  <select name="analytics_skroutz_analytics_tax_class_id" id="input-tax-class" class="form-control">
+                    <option value="0">{{ text_none }}</option>
+                    {% for tax_class in tax_classes %}
+                    {% if tax_class.tax_class_id  ==  analytics_skroutz_analytics_tax_class_id %}
+                    <option value="{{ tax_class.tax_class_id }}" selected="selected">{{ tax_class.title }}</option>
+                    {% else %}
+                    <option value="{{ tax_class.tax_class_id }}">{{ tax_class.title }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+          <div class="form-group">
+          	<label class="col-sm-2 control-label" for="input-options">{{ entry_clone_options }}</label>
+          	<div class="col-sm-4">
+          		<select multiple="multiple" id="input-options" name="analytics_skroutz_analytics_clone_opts[]">
+                    {% if analytics_skroutz_analytics_clone_opts is not iterable %}
+                    {% set analytics_skroutz_analytics_clone_opts=[]%}
+                    {% endif %}
+	                {% for option in Poptions %}
+	                <option value="{{ option.option_id }}" {{ option.option_id in analytics_skroutz_analytics_clone_opts ? ' selected': ''}} > {{ option.name }}</option>
+	            {% endfor %}
+          		</select>
+	            <script>
+	                $(function() {
+	                    $('#input-options').change(function() {
+	                        console.log($(this).val());
+	                    }).multipleSelect({
+	                        width: '100%'
+	                    });
+	                });
+	            </script>
+          	</div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-skroutzid-field"><span data-toggle="tooltip" title="{{ help_clone_options }}">{{ entry_skroutzid_field }}</span></label>
+            <div class="col-sm-10">
+                <select name="analytics_skroutz_analytics_skroutzid_field" id="input-skroutzid-field" class="form-control">
+                    <option value="product_id" {{ analytics_skroutz_analytics_skroutzid_field  ==  'product_id' ? 'selected': ''}}>product_id</option>
+                    <option value="ean" {{ analytics_skroutz_analytics_skroutzid_field  == 'ean'? 'selected': ''}}>EAN</option>
+                    <option value="model" {{ analytics_skroutz_analytics_skroutzid_field  == 'model'? 'selected': ''}}>MODEL</option>
+                    <option value="mpn" {{ analytics_skroutz_analytics_skroutzid_field  == 'mpn'? 'selected':'' }}>MPN</option>
+                </select>
+            </div>
+          </div>
+        </form>
+    </div>
+    </div>
+    </div>
+</div>
+{{ footer }}

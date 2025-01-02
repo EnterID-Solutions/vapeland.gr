@@ -1,0 +1,87 @@
+<modification>
+  <name>Skroutz Analytics</name>
+  <code>itc_skroutz_analytics</code>
+  <version>1.0</version>
+  <author>ITcore</author>
+  <link>http://www.itcore.gr</link>
+    <file path="catalog/controller/checkout/success.php">
+        <operation error="skip">
+            <search><![CDATA[$this->load->language('checkout/success');]]></search>
+            <add position="after"><![CDATA[
+        $this->load->model('extension/analytics/skroutz_analytics');
+        $data['order_active'] = true;
+        $data['skroutz_analytics_status'] = $this->config->get('analytics_skroutz_analytics_status');
+        $data['skroutz_analitics_id'] = $this->config->get('analytics_skroutz_analytics_shop_account_id');
+
+        if(isset($this->session->data['order_id'])){
+            $results = $this->model_extension_analytics_skroutz_analytics->success($this->session->data['order_id']);
+            $data['js_order_items'] = $results['js_order_items'];
+            $data['js_order_totals'] = $results['js_order_totals'];
+        } else {
+            $data['order_active'] = false;
+        }
+
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/common/header.php">
+        <operation error="skip">
+            <search><![CDATA[$this->load->language('common/header');]]></search>
+            <add position="after"><![CDATA[
+            $data['skroutz_analytics_status'] = $this->config->get('analytics_skroutz_analytics_status');
+            $data['skroutz_analitics_id'] = $this->config->get('analytics_skroutz_analytics_shop_account_id');
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/common/header.twig">
+        <operation error="skip">
+            <search><![CDATA[</head>]]></search>
+            <add position="before"><![CDATA[
+            {% if skroutz_analytics_status %}
+                <script type="text/javascript">
+                  (function(a,b,c,d,e,f,g){a['SkroutzAnalyticsObject']=e;a[e]= a[e] || function(){
+                    (a[e].q = a[e].q || []).push(arguments);};f=b.createElement(c);f.async=true;
+                    f.src=d;g=b.getElementsByTagName(c)[0];g.parentNode.insertBefore(f,g);
+                  })(window,document,'script','https://analytics.skroutz.gr/analytics.min.js','skroutz_analytics');
+
+                  skroutz_analytics('session', 'connect', '{{ skroutz_analitics_id }}');
+                </script>
+            {% endif %}
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/common/success.twig">
+        <operation error="skip">
+            <search><![CDATA[{{ footer }}]]></search>
+            <add position="before"><![CDATA[
+            {% if skroutz_analytics_status and order_active %}
+                <script type="text/javascript">
+                {{ js_order_totals }}
+                </script>
+                <script type="text/javascript">
+                {% for key,val in js_order_items %}
+                    {{ val }}
+                {% endfor %}
+                </script>
+            {% endif %}
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/journal3/template/common/successorder.twig">
+        <operation error="skip">
+            <search><![CDATA[{{ footer }}]]></search>
+            <add position="before"><![CDATA[
+            {% if skroutz_analytics_status and order_active %}
+                <script type="text/javascript">
+                {{ js_order_totals }}
+                </script>
+                <script type="text/javascript">
+                {% for key,val in js_order_items %}
+                    {{ val }}
+                {% endfor %}
+                </script>
+            {% endif %}
+            ]]></add>
+        </operation>
+    </file>
+ </modification>

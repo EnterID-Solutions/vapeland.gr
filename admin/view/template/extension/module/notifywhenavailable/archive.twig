@@ -1,0 +1,99 @@
+<table id="archiveWrapper{{ store_id }}" class="table table-bordered table-hover" width="100%">
+	<thead>
+        <tr class="table-header">
+            <th width="20%">{{ text_customer_email }}</th>
+            <th width="15%">{{ text_customer_name }}</th>
+			<th width="20%">{{ text_customer_comment }}</th>
+            <th width="25%">{{ text_product }}</th>
+            {% if setting.PrivacyPolicy %}
+                <th width="10%">{{ text_privacy_policy }}</th>
+            {% endif %}
+            <th width="10%">{{ text_date }}</th>
+            <th width="5%">{{ text_language }}</th>
+            <th width="5%">{{ text_actions }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for source in sources %}
+            <tr>
+                <td>{{ source.customer_email }}</td>
+                <td>{{ source.customer_name }}</td>
+				<td>{{ source.customer_comment }}</td>
+                <td><a href="{{ '../index.php?route=product/product&product_id=' ~ source.product_id }}" target="_blank"><strong>{{ source.product_name }}</strong></a>
+                    <br />
+                    {% if source.selected_options != NULL %}
+                    	{% for item in source.selected_options %}
+                    		{{ item.name }}
+                    	{% endfor %}
+                    {% endif %}
+                </td>
+                {% if setting.PrivacyPolicy %}
+                    <td>{{ source.privacy_policy ? text_agree : '' }}</td>
+                {% endif %}
+                <td>{{ source.date_created }}</td>
+                <td>{{ source.language }}</td>
+                <td><a onclick="removeCustomer('{{ source.notifywhenavailable_id }}')" class="btn btn-sm btn-danger"><i class="fa fa-times"></i>{{ text_remove }}</a></td>
+            </tr>
+    	{% endfor %}
+	</tbody>
+	<tfoot>
+    	<tr>
+			{% if setting.PrivacyPolicy %}
+				<td colspan="8">
+			{% else %}
+				<td colspan="7">
+			{% endif %}
+        	<div class="row">
+              <div class="col-sm-6 text-left">{{ pagination }}</div>
+              <div class="col-sm-6 text-right">{{ results }}</div>
+            </div>
+		</td></tr>
+    </tfoot>
+</table>
+<div style="float:left;">
+ <a target="_blank" href="index.php?route={{ modulePath }}/exportListToCsv&{{ tokenString }}={{ token }}&archive=1" class="btn btn-small btn-info"><i class="icon-download-alt"></i> {{ text_export_csv }}</a>
+</div>
+<div style="float:right;padding: 5px;">
+	<a onclick="removeAllArchive()" class="btn btn-small btn-info"><i class="fa fa-trash"></i>&nbsp;&nbsp;{{ text_remove_all }}</a>
+</div>
+<script>
+function removeCustomer(notifywhenavailableID) {
+	var r=confirm("Are you sure you want to remove the customer?");
+	if (r==true) {
+		$.ajax({
+			url: 'index.php?route={{ modulePath }}/removecustomer&{{ tokenString }}={{ token }}',
+			type: 'post',
+			data: {'notifywhenavailable_id': notifywhenavailableID},
+			success: function(response) {
+				location.reload();
+			}
+		});
+	}
+}
+function removeAllArchive() {
+	var r=confirm("Are you sure you want to remove all records?");
+	if (r==true) {
+		$.ajax({
+			url: 'index.php?route={{ modulePath }}/removeallarchive&{{ tokenString }}={{ token }}',
+			type: 'post',
+			data: {'remove': r},
+			success: function(response) {
+				location.reload();
+			}
+		});
+	}
+}
+$(document).ready(function(){
+	$('#archiveWrapper{{ store_id }} .pagination a').click(function(e){
+		e.preventDefault();
+		$.ajax({
+			url: this.href,
+			type: 'get',
+			dataType: 'html',
+			success: function(data) {
+				$("#archiveWrapper{{ store_id }}").html(data);
+			}
+		});
+	});
+});
+</script>

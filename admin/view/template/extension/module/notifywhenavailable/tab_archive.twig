@@ -1,0 +1,13 @@
+<div id="archiveWrapper{{ store.store_id }}"> </div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$.ajax({
+		url: "index.php?route={{ modulePath }}/getarchive&store_id={{ store.store_id }}&{{ tokenString }}={{ token }}&page=1",
+		type: 'get',
+		dataType: 'html',
+		success: function(data) {		
+			$("#archiveWrapper{{ store.store_id }}").html(data);
+		}
+	});
+});
+</script>

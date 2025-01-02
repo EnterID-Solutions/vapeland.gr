@@ -1,0 +1,92 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="module_adminkey_status" id="input-status" class="form-control">
+                {% if module_adminkey_status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label text-nowrap"" for="module_adminkey_key"><span data-toggle="tooltip"  title="{{help_adminkey}}">{{admin_key}}</span></label>
+				<div class="col-sm-2">
+						<input type="text" name="module_adminkey_key"  id="module_adminkey_key"  value="{{module_adminkey_key}}" placeholder="" class="form-control" onkeyup ="change_key();"/>
+					</div>
+						<button type="button" id="button-generate" data-toggle="tooltip" title="{{button_generate}}" class="btn btn-primary"><i class="fa fa-key"></i></button>
+				</div>
+				<div class="form-group">
+				<label class="col-sm-2 control-label text-nowrap"" for"module_adminkey_key">{{new_adminurl}}</label>
+				<div class="col-sm-10">								
+				{% if module_adminkey_key %}
+				<a><label id="admin_url_key"  class="control-label">{{constant('HTTPS_SERVER') }}?{{module_adminkey_key}}</label></a>
+				{% else %}
+				<a><label id="admin_url_key"  class="control-label">{{constant('HTTPS_SERVER')}}</label></a>
+				{% endif %}			
+				<button type="button" onclick="copyToClipboard('#admin_url_key')" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Copy"><i class="fa fa-copy"></i></button>
+				</div>								
+			</div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript"><!--
+	$('#button-generate').on('click', function() {
+		var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+			var string_length = 12;
+			var randomstring = '';
+			for (var i=0; i<string_length; i++) {
+				var rnum = Math.floor(Math.random() * chars.length);
+				randomstring += chars.substring(rnum,rnum+1);
+				$('input[name=\'module_adminkey_key\']').val(randomstring);
+				$('#admin_url_key').html( '{{ constant('HTTPS_SERVER') }}?' + $('#module_adminkey_key').val());	
+			}
+	});
+	function change_key()
+	{						
+		if ($('#module_adminkey_key').val()=='')
+			$('#admin_url_key').html( '{{ constant('HTTPS_SERVER') }}');
+		else
+			$('#admin_url_key').html( '{{ constant('HTTPS_SERVER') }}?' + $('#module_adminkey_key').val());
+	}
+	function copyToClipboard(element) {
+	  var $temp = $("<input>");
+	  $("body").append($temp);
+	  $temp.val($(element).text()).select();
+	  document.execCommand("copy");
+	  $temp.remove();
+	}
+//--></script> 
+{{ footer }}

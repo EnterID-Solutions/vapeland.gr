@@ -1,0 +1,112 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="well">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label col-sm-2" for="input-name">{{ entry_order }}</label>
+                <input type="text" name="filter_order" value="{{ filter_order }}" placeholder="{{ entry_order }}" id="input-order" class="form-control" />
+                <button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-filter"></i> {{ button_filter }}</button>
+              </div>
+
+          </div>
+
+          </div>
+
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <td class="text-center">{{ column_order }}</td>
+                  <td class="text-left">{{ column_trdate }}</td>
+                  <td class="text-left">{{ column_trid }}</td>
+                  <td class="text-right">{{ column_StatusFlag }}</td>
+                  <td class="text-right">{{ column_action }}</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% if transactions %}
+                  {% for trns in transactions %}
+                    <tr>
+                      <td class="text-center">{{ trns.orderid }}</td>
+                      <td class="text-left">{{ trns.TransactionDateTime }}</td>
+                      <td class="text-left">{{ trns.txId }}</td>
+                      <td class="text-right">{{ trns.status }}</td>
+                      <td class="text-center"><a class="btn btn-info openBtn" data-id="{{ trns.id }}" data-toggle="modal">Show</a></td>
+                    </tr>
+                  {% endfor %}
+                 {% else %}
+                  <tr>
+                    <td class="text-center" colspan="8">{{ text_no_results }}</td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+            </div>
+            <div class="row">
+              <div class="col-sm-6 text-left">{{ pagination }}</div>
+              <div class="col-sm-6 text-right">{{ results }}</div>
+            </div>
+          </div>
+        </div>
+  </div>
+  </div>
+  </div>
+</div>
+  <div class="modal fade" id="transaction-info" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Alphabank Transaction Info</h4>
+        </div>
+        <div class="modal-body">
+
+        </div>
+        </div>
+    </div>
+
+  <script type="text/javascript"><!--
+$('.openBtn').click(function(){
+    var dataid = $(this).data("id");
+  	$('.modal-body').load('index.php?route=extension/payment/alphabank/modal&user_token={{ user_token }}', {id: dataid}, function(result){
+	    $('#transaction-info').modal({show:true});
+	});
+
+
+});
+
+$('#button-filter').on('click', function() {
+	var url = 'index.php?route=extension/payment/alphabank/transactions&user_token={{ user_token }}';
+
+	var filter_order = $('input[name=\'filter_order\']').val();
+
+	if (filter_order) {
+		url += '&filter_order=' + encodeURIComponent(filter_order);
+	}
+    location = url;
+ });
+//--></script>
+
+
+{{ footer }}

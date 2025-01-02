@@ -1,0 +1,13 @@
+            <li>
+                            <a href="https://www.vapeland.gr/" class="m-item icon-only"><i style="margin-right: 5px; color: rgb(3, 135, 0); font-size: 16px" data-icon="&#xe01b;"></i>                    <span class="top-menu-link">Αρχική</span>                </a>
+                                </li>
+            <li>
+                            <a href="https://www.vapeland.gr/wishlist" class="m-item wishlist-total icon-only"><i style="margin-right: 5px; color: rgb(3, 135, 0); font-size: 16px" data-icon="&#xe662;"></i>                    <span class="top-menu-link">Λίστα Επιθυμιών (<span class="product-count">{{_wishlist_}}</span>)</span>                </a>
+                                </li>
+            <li>
+                            <a href="https://www.vapeland.gr/account" class="m-item icon-only"><i style="margin-right: 5px; color: rgb(3, 135, 0); font-size: 16px" data-icon="&#xe1b8;"></i>                    <span class="top-menu-link">O Λογαριασμός μου</span>                </a>
+                                </li>
+            <li>
+                            <a href="https://www.vapeland.gr/contact" class="m-item icon-only"><i style="margin-right: 5px; color: rgb(3, 135, 0); font-size: 16px" data-icon="&#xe67b;"></i>                    <span class="top-menu-link">Επικοινωνήστε μαζί μας</span>                </a>
+                                </li>
+    

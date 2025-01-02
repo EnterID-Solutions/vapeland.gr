@@ -1,0 +1,63 @@
+# Ignore config files that may contain sensitive information
+config.php
+admin/config.php
+
+# Ignore system cache, logs, and download directories
+system/cache/*
+system/logs/*
+system/download/*
+system/upload/*
+system/storage
+
+# Ignore image cache
+image/cache/*
+image/
+image/*
+
+vqmod/*
+!vqmod/xml
+
+# Ignore composer dependencies
+vendor/
+
+# Ignore exported files
+*.csv
+*.xlsx
+*.xml
+!*.ocmod.xml
+*.sql
+*.zip
+*.sh
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+
+# Ignore Visual Studio Code files
+.vscode/
+.cpanel.yml
+
+importdatabase.sh
+vqmod/checked.cache
+admin/view/stylesheet/bootstrap.css
+support/*
+min/*
+min/
+download/*
+download/
+email.vapeland.gr/*
+email.vapeland.gr/
+mods-temple.com/*
+mods-temple.com/
+servises/*
+servises/*
+tinify-lib/*
+tinify-lib/
+vendors/*
+vendors/
+test/*
+test/
+support/*
+support/
+

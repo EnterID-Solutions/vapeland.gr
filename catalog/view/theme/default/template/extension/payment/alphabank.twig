@@ -1,0 +1,59 @@
+<div class="panel-body">
+  {% if not masterpass %}
+  {% if max_installments >= 2 %}
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="installmets-input">{{ text_select_installments }}</label>
+        <select name="installments" class="form-control" id="installmets-input" width="200">
+            <option value="0">0</option>
+
+            {% for i in 2..max_installments %}
+                <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+
+        </select>
+    </div>
+  {% endif %}
+
+  {% endif %}
+</div>
+<div id="alpha"></div>
+<div class="buttons">
+  <div class="pull-right">
+    <a class="btn btn-primary" id="button-confirm">{{ button_confirm }}</a>
+  </div>
+</div>
+<script type="text/javascript"><!--
+$('#button-confirm').bind('click', function() {
+	$.ajax({
+		type: 'POST',
+		datatype: 'json',
+  {% if not masterpass %}
+    {% if max_installments >= 2 %}
+    data: $('#installmets-input'),
+    {% else %}
+    data: {installments:0},
+    {% endif %}
+    url: 'index.php?route=extension/payment/alphabank/confirm',
+  {% else %}
+		  data: {},
+		  url: 'index.php?route=extension/payment/alphabank_masterpass/confirm',
+  {% endif %}
+		beforeSend: function() {
+			$('#button-confirm').attr('disabled', true);
+			$('#payment').before('<div class="attention">Please Wait...</div>');
+		},
+		success: function(json) {
+			if (json['success']) {
+				$('#alpha').append(json['html']);
+			}
+			if (json['error']) {
+				alert(json['error']);
+				$('#button-confirm').attr('disabled', false);
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+//--></script>

@@ -1,0 +1,60 @@
+<div style="overflow:hidden;">
+    {% if (products|length > 0) %}
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+            google.load("visualization", "1", {packages:["corechart"]});
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable([['Product', 'Waiting List', 'Archive', { role: 'annotation' } ],{{ product_infos }}]);
+                var options = { title: 'Products Performance', isStacked: true, legend: { position: 'top', maxLines: 3 }, height: 400 };
+                var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
+            }
+        </script>        
+        <div id='chart_div'></div>
+        {% if (most_wanted_products_ofs is not empty) %}
+        <h3>{{ text_most_wanted_ofs }}</h3>
+        <table class="table table-bordered table-hover" width="100%">
+            <thead>
+                <tr class="table-header">
+                    <th>#</th>
+                    <th>{{ text_product }}</th>
+                    <td>{{ text_count }}</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in most_wanted_products_ofs %} 
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.cust_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+        {% if (most_wanted_products_all_time is not empty) %}
+        <h3>{{ text_most_wanted_all_time }}</h3>
+        <table class="table table-bordered table-hover" width="100%">
+            <thead>
+                <tr class="table-header">
+                    <th>#</th>
+                    <th>{{ text_product }}</th>
+                    <td>{{ text_count }}</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in most_wanted_products_all_time %} 
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.cust_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    {% else %}
+        <center>There is no data yet for a chart.</center>
+    {% endif %}
+</div> 

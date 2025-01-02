@@ -1,0 +1,145 @@
+<modification>
+  <name>Youtube in product Gallery</name>
+  <code>itc_youtube_in_gallery</code>
+  <version>1.0</version>
+  <author>ITcore</author>
+  <link>http://www.itcore.gr</link>
+	<file path="admin/controller/setting/setting.php">
+			<operation error="log">
+					<search><![CDATA[if (isset($this->request->post['config_logo'])) {]]></search>
+					<add position="before"><![CDATA[
+						if (isset($this->request->post['config_youtube'])) {
+							$data['config_youtube'] = $this->request->post['config_youtube'];
+						} else {
+							$data['config_youtube'] = $this->config->get('config_youtube');
+						}
+
+						if (isset($this->request->post['config_youtube']) && is_file(DIR_IMAGE . $this->request->post['config_youtube'])) {
+							$data['img_youtube'] = $this->model_tool_image->resize($this->request->post['config_youtube'], 100, 100);
+						} elseif ($this->config->get('config_youtube') && is_file(DIR_IMAGE . $this->config->get('config_youtube'))) {
+							$data['img_youtube'] = $this->model_tool_image->resize($this->config->get('config_youtube'), 100, 100);
+						} else {
+							$data['img_youtube'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+						}
+						]]></add>
+			</operation>
+	</file>
+	<file path="admin/view/template/setting/setting.twig">
+			<operation error="log">
+					<search><![CDATA[<input type="hidden" name="config_logo"]]></search>
+					<add position="after" offset="2"><![CDATA[
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="input-youtube">youtube Image</label>
+							<div class="col-sm-10"><a href="" id="thumb-youtube" data-toggle="image" class="img-thumbnail"><img src="{{ img_youtube }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>
+								<input type="hidden" name="config_youtube" value="{{ config_youtube }}" id="input-youtube" />
+							</div>
+						</div>
+						]]></add>
+			</operation>
+	</file>
+    <file path="admin/view/template/catalog/product_form.twig">
+        <operation error="log">
+            <search><![CDATA[<label class="col-sm-2 control-label" for="input-location">{{ entry_location }}</label>]]></search>
+            <add position="before" offset="1"><![CDATA[
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-youtube">{{ entry_youtube }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="youtube" value="{{ youtube }}" placeholder="{{ entry_youtube }}" id="input-youtube" class="form-control" />
+                </div>
+              </div>
+              ]]></add>
+        </operation>
+    </file>
+    <file path="admin/controller/catalog/product.php">
+        <operation error="log">
+            <search><![CDATA[if (isset($this->request->post['location'])) {]]></search>
+            <add position="before"><![CDATA[
+              if (isset($this->request->post['youtube'])) {
+          			$data['youtube'] = $this->request->post['youtube'];
+          		} elseif (!empty($product_info)) {
+          			$data['youtube'] = $product_info['youtube'];
+          		} else {
+          			$data['youtube'] = '';
+          		}
+              ]]></add>
+        </operation>
+    </file>
+    <file path="admin/language/*/catalog/product.php">
+        <operation error="log">
+            <search><![CDATA[$_['entry_location']]]></search>
+            <add position="after"><![CDATA[
+$_['entry_youtube']         = 'Youtube Video Url';
+              ]]></add>
+        </operation>
+    </file>
+    <file path="admin/model/catalog/product.php">
+        <operation error="log">
+            <search><![CDATA[if (isset($data['image'])) {]]></search>
+            <add position="before"><![CDATA[
+              if (isset($data['youtube'])) {
+                $this->db->query("UPDATE " . DB_PREFIX . "product SET youtube = '" . $this->db->escape($data['youtube']) . "' WHERE product_id = '" . (int)$product_id . "'");
+              }
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/model/catalog/product.php">
+        <operation error="log">
+            <search><![CDATA[=> $query->row['status'],]]></search>
+            <add position="after"><![CDATA[
+              'youtube' => $query->row['youtube'],
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/product/product.php">
+        <operation error="log">
+            <search><![CDATA[$data['points']]]></search>
+            <add position="after"><![CDATA[
+              $data['youtube'] = $product_info['youtube'];
+							$this->load->model('tool/image');
+							$data['youtube_image'] = $this->model_tool_image->resize($this->config->get('config_youtube'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'));
+							//$data['youtube_image'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'));
+              ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/product/product.twig">
+      <operation error="log">
+          <search regex="true"><![CDATA[~(\{\%[\s?]*for[\s?]*image[\s?]*in[\s?]*images*[\s\S]*?endfor[\s?]*\%\})~]]></search>
+          <add position="replace"><![CDATA[
+            $1
+            {% if youtube %}
+            <div class="additional-image" data-index="{{ loop.index0 }}">
+						   <a class="youtube thumbnail" href="{{ youtube }}" title="{{ heading_title }}"><img src="{{ youtube_image }}" title="{{ heading_title }}" data-largeimg="{{ image.popup }}" /></a>
+            </div>
+            {% endif %}
+            ]]></add>
+      </operation>
+      <operation error="">
+        <search regex="true"><![CDATA[~(\{\{[\s?]*footer[\s?]*\}\})~]]></search>
+        <add position="replace"><![CDATA[
+          <script type="text/javascript"><!--
+          $('.additional-image a.youtube').magnificPopup({
+						items: {
+									 src: '{{ youtube }}'
+								 },
+							type: 'iframe',
+							iframe: {
+										markup: '<div class="mfp-iframe-scaler">'+
+														'<div class="mfp-close"></div>'+
+														'<iframe class="mfp-iframe" frameborder="0" allowfullscreen></iframe>'+
+														'</div>',
+										patterns: {
+												youtube: {
+														index: 'youtube.com/',
+														id: 'v=',
+														src: '//www.youtube.com/embed/%id%?autoplay=1'
+												}
+										 },
+										 srcAction: 'iframe_src',
+								 }
+          });
+          //--></script>
+          $1
+          ]]></add>
+      </operation>
+    </file>
+ </modification>
