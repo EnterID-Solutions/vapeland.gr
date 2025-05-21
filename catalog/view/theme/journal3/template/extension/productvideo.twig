@@ -1,0 +1,62 @@
+ <!--product video code start-->
+{% if (productvideo_tabstatus == 0 or productvideo_tabstatus == 1 ) %}
+{% if (videos is not empty) %}
+<div class="row">
+	<h3> {{ productvideo_title }}</h3>
+	<ul class="thumbnails list-inline">
+		{% for video in videos %}
+		<li class="image-additional">
+			{% if (video['src_youtube'] is not empty) %}
+				<a class="popup-youtube thumbnail" href="{{ video['src_youtube'] }}"><i class="fa fa-play-circle-o fa-3"></i> <img src="{{ video['thumb'] }}"></a>
+			{% endif %}
+
+			{% if (video['src_vimeo'] is not empty) %}
+				<a class="popup-youtube thumbnail" href="{{ video['src_vimeo'] }}"><i class="fa fa-play-circle-o fa-3"></i> <img src="{{ video['thumb'] }}"></a>
+			{% endif %}
+
+			{% if (video['src_uploaded'] is not empty) %}
+				<a class="popup-youtube thumbnail" href="{{ video['src_uploaded'] }}"><i class="fa fa-play-circle-o fa-3"></i> <img src="{{ video['thumb'] }}"></a>
+			{% endif %}
+		</li>
+		{% endfor %}
+	</ul>
+</div>
+{% endif %}
+{% endif %}
+
+{% if (productvideo_tabstatus == 2 ) %}
+{% if (videos is not empty) %}
+	
+		{% for video in videos %}
+		<div class="swiper-slide additional-image swiper-slide-visible">
+		<div class="image-additional">
+			{% if (video['src_youtube'] is not empty) %}
+				<a class="popup-youtube" href="{{ video['src_youtube'] }}"><i class="fa fa-play-circle-o fa-3"></i> <img src="{{ video['thumb'] }}"></a>
+			{% endif %}
+
+			{% if (video['src_vimeo'] is not empty) %}
+				<a class="popup-youtube" href="{{ video['src_vimeo'] }}"><i class="fa fa-play-circle-o fa-3"></i> <img src="{{ video['thumb'] }}"></a>
+			{% endif %}
+
+			{% if (video['src_uploaded'] is not empty) %}
+				<a class="popup-youtube" href="{{ video['src_uploaded'] }}"><i class="fa fa-play-circle-o fa-3"></i> <img src="{{ video['thumb'] }}"></a>
+			{% endif %}
+		</div>
+		</div>
+		{% endfor %}
+	
+{% endif %}
+{% endif %}
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.popup-youtube').magnificPopup({
+		type: 'iframe',
+		mainClass: 'mfp-fade',
+		removalDelay: 160,
+		preloader: false,
+		fixedContentPos: true
+	});
+});
+</script>
+<!--product video code end-->

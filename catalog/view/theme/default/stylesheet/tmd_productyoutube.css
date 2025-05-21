@@ -1,0 +1,26 @@
+.popup-youtube,
+.upload-youtube {
+	position: relative;
+	display: block;
+}
+.popup-youtube i,
+.upload-youtube i {
+	font-size: 20px;
+	left: 40%;
+	position: absolute;
+	top: 35%;
+	color:#229ac8;
+}
+
+/* == J2 Css start here == */
+.extended-container ul.list-inline{
+	padding:0;
+	margin:0;
+}
+.extended-container ul.list-inline li {
+	margin: 0 5px 0 0;
+    list-style: none;
+    display: inline-block;
+	
+}
+/* == J2 Css end here == */

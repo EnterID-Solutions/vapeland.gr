@@ -1,0 +1,63 @@
+ <!-- product video code start -->
+{% if productvideo_status %}
+<div id="tmd_productvideo">
+	{% if (productvideo_tabstatus == 0 or productvideo_tabstatus == 1 ) %}
+	{% if (videos is not empty) %}
+	<div class="row">
+		<div class="col-sm-12">
+			<h3> {{ productvideo_title }}</h3>
+			<ul class="list-inline thumb-image">
+				{% for video in videos %}
+					{% if (video['src_youtube'] is not empty) %}
+					<li class="additional1">
+						<a class="popup-youtube" href="{{ video['src_youtube'] }}"><i class="fa fa-play-circle-o fa-3"></i> <img src="{{ video['thumb'] }}" class="img-thumbnail"></a>
+					</li>
+					{% elseif (video['src_vimeo'] is not empty) %}
+					<li class="additional1">
+						<a class="popup-youtube" href="{{ video['src_vimeo'] }}"><i class="fa fa-play-circle-o fa-3"></i> <img src="{{ video['thumb'] }}" class="img-thumbnail"></a>
+					</li>
+					{% elseif (video['src_uploaded'] is not empty) %}
+					<li class="additional1">
+						<a class="popup-youtube" href="{{ video['src_uploaded'] }}"><i class="fa fa-play-circle-o fa-3"></i> <img src="{{ video['thumb'] }}" class="img-thumbnail"></a>
+					</li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	{% endif %}
+	{% endif %}
+
+	{% if (productvideo_tabstatus == 2 ) %}
+	{% if (videos is not empty) %}
+	{% for video in videos %}
+	{% if (video['src_youtube'] is not empty) %}
+	<li class="image-additional">
+		<a class="popup-youtube " href="{{ video['src_youtube'] }}"><i class="fa fa-play-circle-o fa-3"></i> <img src="{{ video['thumb'] }}" class="img-responsive"></a>
+	</li>
+	{% elseif (video['src_vimeo'] is not empty) %}
+	<li class="image-additional">
+		<a class="popup-youtube " href="{{ video['src_vimeo'] }}"><i class="fa fa-play-circle-o fa-3"></i> <img src="{{ video['thumb'] }}" class="img-responsive"></a>
+	</li>
+	{% elseif (video['src_uploaded'] is not empty) %}
+	<li class="image-additional">
+		<a class="popup-youtube " href="{{ video['src_uploaded'] }}"><i class="fa fa-play-circle-o fa-3"></i> <img src="{{ video['thumb'] }}" class="img-responsive"></a>
+	</li>
+	{% endif %}
+	{% endfor %}
+	{% endif %}
+	{% endif %}
+</div>
+{% endif %}
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.popup-youtube').magnificPopup({
+		type: 'iframe',
+		mainClass: 'mfp-fade',
+		removalDelay: 160,
+		preloader: false,
+		fixedContentPos: true
+	});
+});
+</script>

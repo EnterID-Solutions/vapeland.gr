@@ -1,9 +1,5 @@
 <?php
 
-class ControllerExtensionModuleAdminBar extends Controller
-{
-    // Controller methods will be added here
-}
 /*
  * BitNinjal Server Security
  * All rights reserved.
