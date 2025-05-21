@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification
+              xmlns="https://github.com/vqmod/vqmod"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://github.com/vqmod/vqmod https://raw.githubusercontent.com/vqmod/vqmod/master/vqmod.xsd">
+              >
+  <id>Wholesale Loho</id>
+  <version>1.0</version>
+  <vqmver>2.X</vqmver>
+  <author>Enterid</author>
+  <file name="catalog/controller/common/header.php-">
+    <operation info="">
+      <search position="before"><![CDATA[
+      return $this->load->view('common/header', $data);
+      ]]></search>
+      <add><![CDATA[
+        echo "asdas";
+      if ($this->customer->isLogged()){
+        $data['logo'] = $server . 'image/' . "vapeland5-wholesales-436x200.png";
+        echo $this->customer->isLogged();
+        echo   $data['logo'];
+      }
+      ]]></add>
+    </operation>
+  </file>
+</modification>

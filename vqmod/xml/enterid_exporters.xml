@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Exports</id>
+	<version>1.0</version>
+	<vqmver>2.X</vqmver>
+	<author>Enterid</author>
+  <file name="admin/view/template/extension/module/aqe/catalog/product_list.twig">
+    <operation error="log">
+      <search position="before"><![CDATA[<button type="button" class="btn btn-primary" data-toggle="tooltip" data-container="body" data-placement="bottom" title="{{ button_add }}" data-url="{{ add }}" id="btn-insert" data-form="#pqe-list-form" data-context="#content" data-overlay="#page-overlay"><i class="fa fa-plus"></i></button>]]></search>
+      <add><![CDATA[
+        <a onclick="$('#pqe-list-form').attr('action', '{{ excel_export_products }}'); $('#pqe-list-form').attr('target', '_blank'); $('#pqe-list-form').submit();" class="btn btn-info">Export Products</a>
+        ]]></add>
+    </operation>
+  </file>
+  <file name="admin/controller/extension/module/aqe/catalog/product.php">
+    <operation error="log">
+      <search position="after"><![CDATA[$data['delete'] = $this->url->link('catalog/product/delete', 'user_token=' . $this->session->data['user_token'] . $url . '&aqer=1', true);]]></search>
+      <add><![CDATA[
+        $data['excel_export_products']  = $this->url->link('catalog/exporter', 'user_token=' . $this->session->data['user_token'], true);
+        ]]></add>
+    </operation>
+  </file>
+
+
+</modification>

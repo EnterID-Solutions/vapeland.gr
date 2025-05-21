@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Invoice Type</id>
+	<version>1.0</version>
+	<vqmver>2.X</vqmver>
+	<author>Enterid</author>
+  <file name="admin/view/template/setting/setting.twig">
+      <operation error="log">
+          <search position="after"><![CDATA[<li><a href="#tab-option" data-toggle="tab">{{ tab_option }}</a></li>]]></search>
+          <add><![CDATA[
+            <li><a href="#tab-customer-groups" data-toggle="tab">Wholesale Customer Groups</a></li>
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="before"><![CDATA[<div class="tab-pane" id="tab-image">]]></search>
+          <add><![CDATA[
+            <div class="tab-pane" id="tab-customer-groups">
+              <div class="form-group">
+              	<label class="col-sm-2 control-label" for="input-customer-groups">Wholesale Customer Groups</label>
+              	<div class="col-sm-4">
+              		<select multiple="multiple" id="input-customer-groups" name="config_wholesale_customer_groups[]">
+    				{% if not config_wholesale_customer_groups is iterable %}
+                    {% set config_wholesale_customer_groups = [] %}
+                    {% endif %}
+    	             {% for customer_group in customer_groups %}
+    	                <option value="{{ customer_group.customer_group_id }}" {{ customer_group.customer_group_id in config_wholesale_customer_groups ? ' selected=\"selected\"': '' }} > {{ customer_group.name }}</option>
+    	            {% endfor %}
+              		</select>
+    	            <script>
+    	                $(function() {
+    	                    $('#input-customer-groups').change(function() {
+    	                        console.log($(this).val());
+    	                    }).multipleSelect({
+    	                        width: '100%'
+    	                    });
+    	                });
+    	            </script>
+              	</div>
+              </div>
+            </div>
+            ]]></add>
+      </operation>
+  </file>
+  <file name="admin/controller/setting/setting.php">
+      <operation error="log">
+          <search position="after"><![CDATA[$data['user_token'] = $this->session->data['user_token'];]]></search>
+          <add><![CDATA[
+                $this->document->addScript('view/javascript/mlselect.js');
+                $this->document->addStyle('view/stylesheet/multiple-select.css');
+                if(!is_object($this->model_customer_customer_group)){
+                  $this->load->model('customer/customer_group');
+                }
+                $data['customer_groups'] = $this->model_customer_customer_group->getCustomerGroups();
+
+            		if (isset($this->request->post['config_wholesale_customer_groups'])) {
+            			$data['config_wholesale_customer_groups'] = $this->request->post['config_wholesale_customer_groups'];
+            		} else {
+            			$data['config_wholesale_customer_groups'] = $this->config->get('config_wholesale_customer_groups');
+            		}
+            ]]></add>
+      </operation>
+  </file>
+  <file name="catalog/controller/product/product.php">
+      <operation error="log">
+          <search position="after"><![CDATA[$data['price'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);]]></search>
+          <add><![CDATA[
+            $data['price_wo_vat'] = $this->currency->format($product_info['price'], $this->session->data['currency']);
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[$data['special'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);]]></search>
+          <add><![CDATA[
+            $data['special_wo_vat'] = $this->currency->format($product_info['special'], $this->session->data['currency']);
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="before"><![CDATA[$data['discounts'] = array();]]></search>
+          <add><![CDATA[
+            $isWholesale = false;
+            $wholesaleGroups = $this->config->get('config_wholesale_customer_groups');
+            if($this->customer->isLogged() && in_array($this->customer->getGroupId(), $wholesaleGroups)){
+              $isWholesale = true;
+            }
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[=> $option_value['name'],]]></search>
+          <add><![CDATA[
+						'quantity'		=>	$option_value['quantity'],
+            ]]></add>
+      </operation>
+  </file>
+  <file name="catalog/controller/product/category.php">
+      <operation error="log">
+          <search position="after"><![CDATA[$price = false;]]></search>
+          <add><![CDATA[
+            $price_wo_vat = false;
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[$special = false;]]></search>
+          <add><![CDATA[
+            $special_wo_vat = false;
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);]]></search>
+          <add><![CDATA[
+            $price_wo_vat = $this->currency->format(number_format($result['price'], 2, '.', ''), $this->session->data['currency']);
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);]]></search>
+          <add><![CDATA[
+            $special_wo_vat = $this->currency->format(number_format($result['special'], 2, '.', ''), $this->session->data['currency']);
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="before" index="2"><![CDATA[foreach ($results as $result) {]]></search>
+          <add><![CDATA[
+            $isWholesale = false;
+            $wholesaleGroups = $this->config->get('config_wholesale_customer_groups');
+            if($this->customer->isLogged() && in_array($this->customer->getGroupId(), $wholesaleGroups)){
+              $isWholesale = true;
+            }
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[=> $special,]]></search>
+          <add><![CDATA[
+            'price_wo_vat'   => $price_wo_vat,
+            'special_wo_vat' => $special_wo_vat,
+            'isWholesale'    => $isWholesale,
+            ]]></add>
+      </operation>
+  </file>
+  <file name="catalog/controller/product/manufacturer.php">
+      <operation error="log">
+          <search position="after"><![CDATA[$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);]]></search>
+          <add><![CDATA[
+            $price_wo_vat = $this->currency->format(number_format($result['price'], 2, '.', ''), $this->session->data['currency']);
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);]]></search>
+          <add><![CDATA[
+            $special_wo_vat = $this->currency->format(number_format($result['special'], 2, '.', ''), $this->session->data['currency']);
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="before" index="2"><![CDATA[foreach ($results as $result) {]]></search>
+          <add><![CDATA[
+            $isWholesale = false;
+            $wholesaleGroups = $this->config->get('config_wholesale_customer_groups');
+            if($this->customer->isLogged() && in_array($this->customer->getGroupId(), $wholesaleGroups)){
+              $isWholesale = true;
+            }
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[=> $special,]]></search>
+          <add><![CDATA[
+            'price_wo_vat'   => $price_wo_vat,
+            'special_wo_vat' => $special_wo_vat,
+            'isWholesale'    => $isWholesale,
+            ]]></add>
+      </operation>
+  </file>
+  <file name="catalog/controller/product/search.php">
+      <operation error="log">
+          <search position="after"><![CDATA[$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);]]></search>
+          <add><![CDATA[
+            $price_wo_vat = $this->currency->format(number_format($result['price'], 2, '.',''), $this->session->data['currency']);
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);]]></search>
+          <add><![CDATA[
+            $special_wo_vat = $this->currency->format(number_format($result['special'], 2, '.',''), $this->session->data['currency']);
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="before"><![CDATA[foreach ($results as $result) {]]></search>
+          <add><![CDATA[
+            $isWholesale = false;
+            $wholesaleGroups = $this->config->get('config_wholesale_customer_groups');
+            if($this->customer->isLogged() && in_array($this->customer->getGroupId(), $wholesaleGroups)){
+              $isWholesale = true;
+            }
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[=> $special,]]></search>
+          <add><![CDATA[
+            'price_wo_vat'   => $price_wo_vat,
+            'special_wo_vat' => $special_wo_vat,
+            'isWholesale'    => $isWholesale,
+            ]]></add>
+      </operation>
+  </file>
+  <file name="catalog/controller/journal3/products.php">
+      <operation error="log">
+          <search position="after"><![CDATA[=> $price,]]></search>
+          <add><![CDATA[
+            'price_wo_vat' => number_format($result['price'], 2, '.',''),
+            'special_wo_vat'  => number_format($result['special'], 2, '.',''),
+            'isWholesale' => $isWholesale,
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[$products = array();]]></search>
+          <add><![CDATA[
+            $isWholesale = false;
+            $wholesaleGroups = $this->config->get('config_wholesale_customer_groups');
+            if($this->customer->isLogged() && in_array($this->customer->getGroupId(), $wholesaleGroups)){
+              $isWholesale = true;
+            }
+						//$this->log->write($isWholesale);
+            ]]></add>
+      </operation>
+  </file>
+  <file name="catalog/controller/journal3/price.php">
+      <operation error="log">
+          <search position="after"><![CDATA[$data['price'] = $this->currency->format($this->tax->calculate(($base_price + $options_price) * $quantity, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);]]></search>
+          <add><![CDATA[
+            $data['price_wo_vat'] = $this->currency->format(($base_price + $options_price) * $quantity, $this->session->data['currency']);
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[$data['special'] = $this->currency->format($this->tax->calculate($special, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);]]></search>
+          <add><![CDATA[
+            $data['special_wo_vat'] = $this->currency->format($special, $this->session->data['currency']);
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[$data['weight'] = $this->weight->format((float)$product_info['weight'] + (float)$options_weight, $product_info['weight_class_id']);]]></search>
+          <add><![CDATA[
+            $data['isWholesale'] = false;
+            $wholesaleGroups = $this->config->get('config_wholesale_customer_groups');
+            if($this->customer->isLogged() && in_array($this->customer->getGroupId(), $wholesaleGroups)){
+              $data['isWholesale'] = true;
+            }
+            ]]></add>
+      </operation>
+  </file>
+  <file name="catalog/view/theme/default/template/product/product.twig">
+      <operation error="log">
+          <search position="replace"><![CDATA[<h2>{{ price }}</h2>]]></search>
+          <add><![CDATA[
+            {% if isWholesale %}
+              <h2>{{ price_wo_vat }}</h2>
+            {% else %}
+              <h2>{{ price }}</h2>
+            {% endif %}
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="replace"><![CDATA[<h2>{{ special }}</h2>]]></search>
+          <add><![CDATA[
+            {% if isWholesale %}
+              <h2>{{ special_wo_vat }}</h2>
+            {% else %}
+              <h2>{{ special }}</h2>
+            {% endif %}
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="replace"><![CDATA[<li><span style="text-decoration: line-through;">{{ price }}</span></li>]]></search>
+          <add><![CDATA[
+            {% if isWholesale %}
+              <li><span style="text-decoration: line-through;">{{ price_wo_vat }}</span></li>
+            {% else %}
+              <li><span style="text-decoration: line-through;">{{ price }}</span></li>
+            {% endif %}
+            ]]></add>
+      </operation>
+  </file>
+  <file name="catalog/view/theme/journal3/template/product/product.twig">
+      <operation error="log">
+          <search position="replace"><![CDATA[<div class="product-price">{{ price }}</div>]]></search>
+          <add><![CDATA[
+            {% if isWholesale %}
+              <div class="product-price">{{ price_wo_vat }}</div>
+            {% else %}
+              <div class="product-price">{{ price }}</div>
+            {% endif %}
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="replace" offset="1"><![CDATA[<div class="product-price-new">{{ special }}</div>]]></search>
+          <add><![CDATA[
+            {% if isWholesale %}
+              <div class="product-price-new">{{ special_wo_vat }}</div>
+              <div class="product-price-old">{{ price_wo_vat }}</div>
+            {% else %}
+              <div class="product-price-new">{{ special }}</div>
+              <div class="product-price-old">{{ price }}</div>
+            {% endif %}
+            ]]></add>
+      </operation>
+			<operation error="log">
+          <search position="before" index="1,4,7"><![CDATA[{% if option_value.price %}]]></search>
+          <add><![CDATA[
+						{% if isWholesale %}
+							{{ option_value.quantity }} Τεμάχια
+							{% endif %}
+            ]]></add>
+      </operation>
+  </file>
+  <file name="catalog/view/theme/journal3/template/journal3/product_card.twig">
+      <operation error="log">
+          <search position="replace"><![CDATA[<span class="price-new">{{ product.special }}</span> <span class="price-old">{{ product.price }}</span>]]></search>
+          <add><![CDATA[
+            {% if product.isWholesale %}
+              <span class="price-new">{{ product.special_wo_vat }}</span> <span class="price-old">{{ product.price_wo_vat }}</span>
+            {% else %}
+              <span class="price-new">{{ product.special }}</span> <span class="price-old">{{ product.price }}</span>
+            {% endif %}
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="replace"><![CDATA[<span class="price-normal">{{ product.price }}</span>]]></search>
+          <add><![CDATA[
+            {% if product.isWholesale %}
+              <span class="price-normal">{{ product.price_wo_vat }}</span>
+            {% else %}
+              <span class="price-normal">{{ product.price }}</span>
+            {% endif %}
+            ]]></add>
+      </operation>
+  </file>
+	<file name="admin/controller/sale/order.php">
+		<operation error="log">
+			<search position="before"><![CDATA[$data['products'][] = array(]]></search>
+			<add><![CDATA[
+				//if(in_array($order_info['customer_group_id'], $this->config->get('config_wholesale_customer_groups'))){
+
+					$price = $this->currency->format($product['price'], $order_info['currency_code'], $order_info['currency_value']);
+					//$total = $this->currency->format($product['total'], $order_info['currency_code'], $order_info['currency_value']);
+					$total = $this->currency->format(($product['price'] * (int)$product['quantity']), $order_info['currency_code'], $order_info['currency_value']);
+			 //} else {
+					//$price = $this->currency->format($product['price'] + ($this->config->get('config_tax') ? $product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']);
+					//$total = $this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']);
+				//}
+				]]></add>
+		</operation>
+
+		<operation error="log">
+			<search position="replace"><![CDATA['price'    		   => $this->currency->format($product['price'] + ($this->config->get('config_tax') ? $product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']),]]></search>
+			<add><![CDATA[
+				'price'			=> $price,
+				]]></add>
+		</operation>
+		<operation error="log">
+			<search position="replace"><![CDATA['total'    		   => $this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']),]]></search>
+			<add><![CDATA[
+				'total'			=> $total,
+				]]></add>
+		</operation>
+
+		<operation error="log">
+			<search position="before" index="1"><![CDATA[$product_data[] = array(]]></search>
+			<add><![CDATA[
+				//if(in_array($order_info['customer_group_id'], $this->config->get('config_wholesale_customer_groups'))){
+					$price = $this->currency->format($product['price'], $order_info['currency_code'], $order_info['currency_value']);
+					$total = $this->currency->format($product['total'], $order_info['currency_code'], $order_info['currency_value']);
+				//} else {
+					//$price = $this->currency->format($product['price'] + ($this->config->get('config_tax') ? $product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']);
+					//$total = $this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']);
+				//}
+				]]></add>
+		</operation>
+		<operation error="log">
+			<search position="replace"><![CDATA['price'    => $this->currency->format($product['price'] + ($this->config->get('config_tax') ? $product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']),]]></search>
+			<add><![CDATA[
+				'price'			=> $price,
+				]]></add>
+		</operation>
+		<operation error="log">
+			<search position="replace"><![CDATA['total'    => $this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value'])]]></search>
+			<add><![CDATA[
+				'total'			=> $total,
+				]]></add>
+		</operation>
+		<operation error="log">
+			<search position="before"><![CDATA[$this->response->setOutput($this->load->view('sale/order_invoice', $data));]]></search>
+			<add><![CDATA[
+				// Custom Fields
+				$this->load->model('customer/custom_field');
+				$custom_fields = $this->model_customer_custom_field->getCustomFields($filter_data);
+				$data['gr_invoice_data']=array();
+				foreach($order_info['custom_field'] as $k => $v){
+					if($k == '1'){ continue; }
+					foreach($custom_fields as $cf){
+						if($cf['custom_field_id'] == $k){
+							$data['gr_invoice_data'][$cf['name']]=$v;
+						}
+					}
+				}
+				if(in_array($order_info['customer_group_id'], $this->config->get('config_wholesale_customer_groups'))){
+					$data['isInWholesale'] = true;
+				} else {
+					$data['isInWholesale'] = false;
+				}
+				]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/sale/order_invoice.twig">
+		<operation error="log>">
+			<search position="after"><![CDATA[<td style="width: 50%;"><b>{{ text_shipping_address }}</b></td>]]></search>
+			<add><![CDATA[
+				{% if isInWholesale %}
+				<td style="width: 30%;"><b>Στοιχεία Τιμολόγισης</b></td>
+				{% endif %}
+				]]></add>
+		</operation>
+		<operation error="log>">
+			<search position="after" index="2"><![CDATA[</address></td>]]></search>
+			<add><![CDATA[
+				{% if isInWholesale %}
+				<td>
+					{% for titlos, value in gr_invoice_data %}
+						{{titlos}}: {{ value }}<br>
+					{% endfor %}
+				</td>
+				{% endif %}
+				]]></add>
+		</operation>
+		<operation error="log>">
+			<search position="replace"><![CDATA[<td style="width: 50%;"><b>{{ text_payment_address }}</b></td>]]></search>
+			<add><![CDATA[
+				{% if isInWholesale %}
+				<td style="width: 35%;"><b>{{ text_payment_address }}</b></td>
+				{% endif %}
+				]]></add>
+		</operation>
+		<operation error="log>">
+			<search position="replace"><![CDATA[<td style="width: 50%;"><b>{{ text_shipping_address }}</b></td>]]></search>
+			<add><![CDATA[
+				{% if isInWholesale %}
+				<td style="width: 35%;"><b>{{ text_shipping_address }}</b></td>
+				{% endif %}
+				]]></add>
+		</operation>
+	</file>
+</modification>

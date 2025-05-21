@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification
+              xmlns="https://github.com/vqmod/vqmod"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://github.com/vqmod/vqmod https://raw.githubusercontent.com/vqmod/vqmod/master/vqmod.xsd">
+              >
+  <id>Extra information</id>
+  <version>1.0</version>
+  <vqmver>2.X</vqmver>
+  <author>Enterid</author>
+  <file name="catalog/controller/product/product.php">
+    <operation info="">
+      <search position="before"><![CDATA[
+      $data['discounts'] = array();
+      ]]></search>
+      <add><![CDATA[
+      $data['hasjan'] = $product_info['jan'];
+      $data['hasean'] = $product_info['ean'];
+      ]]></add>
+    </operation>
+  </file>
+  <file name="/catalog/view/theme/journal3/template/product/product.twig">
+    <operation info="">
+      <search position="before"><![CDATA[
+      {% if tags and not j3.document.isPopup() and (j3.settings.get(stylePrefix ~ 'TagsPosition') == 'details') %}
+      ]]></search>
+      <add><![CDATA[
+        {% if hasjan %}
+        <div class="taxnicotine">
+          {{ text_taxnicotine }}
+        </div>
+        {% endif %}
+
+        {% if hasean %}
+        <div class="hasnicotine">
+          {{ text_hasnicotine}}
+        </div>
+        {% endif %}
+      ]]></add>
+    </operation>
+  </file>
+
+
+  <file name="admin/view/template/catalog/product_form.twig">
+    <operation info="">
+      <search position="replace"><![CDATA[
+      <input type="text" name="ean" value="{{ ean }}" placeholder="{{ entry_ean }}" id="input-ean" class="form-control" />
+      ]]></search>
+      <add><![CDATA[
+              <td><select name="ean">
+                    <option value="0">Οχι</option>
+                    <option value="1" {{ (ean == '1') ? 'selected' : '' }}>Ναι</option>
+                </select></td>
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="replace"><![CDATA[
+      <input type="text" name="jan" value="{{ jan }}" placeholder="{{ entry_jan }}" id="input-jan" class="form-control" />
+      ]]></search>
+      <add><![CDATA[
+              <td><select name="jan">
+                    <option value="0">Οχι</option>
+                    <option value="1" {{ (jan == '1') ? 'selected' : '' }}>Ναι</option>
+                </select></td>
+      ]]></add>
+    </operation>
+  </file>
+
+  <file name="admin/language/el-gr/catalog/product.php">
+    <operation info="">
+      <search position="replace"><![CDATA[
+      $_['entry_ean']              = 'EAN';
+      ]]></search>
+      <add><![CDATA[
+      $_['entry_ean']              = 'Περιέχει Νικοτίνης';
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="replace"><![CDATA[
+      $_['entry_jan']              = 'JAN';
+      ]]></search>
+      <add><![CDATA[
+      $_['entry_jan']              = 'Φόρος Νικοτίνης';
+      ]]></add>
+    </operation>
+  </file>
+
+
+  <file name="catalog/controller/mail/order.php">
+    <operation info="">
+      <search position="before" index="1"><![CDATA[
+      $data['products'][] = array(
+      ]]></search>
+      <add><![CDATA[
+      $data['text_taxnicotine'] = $language->get('text_taxnicotine');
+      $this->load->model('catalog/product');
+      $product_info = $this->model_catalog_product->getProduct($order_product['product_id']);
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="after" index="1"><![CDATA[
+      'model'    => $order_product['model'],
+      ]]></search>
+      <add><![CDATA[
+      'hasjan' => $product_info['jan'],
+      ]]></add>
+    </operation>
+  </file>
+
+  <file name="catalog/view/theme/default/template/mail/order_add.twig">
+    <operation info="">
+      <search position="before"><![CDATA[
+      {% for option in product.option %}<br />
+      ]]></search>
+      <add><![CDATA[
+        {% if product.hasjan %}
+        <br><span><small>{{ text_taxnicotine }}</small></span>
+        {% endif %}
+      ]]></add>
+    </operation>
+  </file>
+
+
+</modification>

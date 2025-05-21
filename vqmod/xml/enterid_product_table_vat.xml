@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification
+              xmlns="https://github.com/vqmod/vqmod"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://github.com/vqmod/vqmod https://raw.githubusercontent.com/vqmod/vqmod/master/vqmod.xsd">
+              >
+  <id>Replace ABC with 123</id>
+  <version>1.0</version>
+  <vqmver>2.X</vqmver>
+  <author>xxx</author>
+  <file name="catalog/controller/checkout/cart.php">
+    <operation info="">
+      <search position="after"><![CDATA[
+      $unit_price = $this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax'));
+      ]]></search>
+      <add><![CDATA[
+      $unit_price_tax = $unit_price - $product['price'];
+      $unit_price_without_tax = $product['price'];
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="replace"><![CDATA[
+      $price = $this->currency->format($unit_price, $this->session->data['currency']);
+      ]]></search>
+      <add><![CDATA[
+      $price = $this->currency->format($unit_price_without_tax, $this->session->data['currency']);
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="after"><![CDATA[
+      $total = $this->currency->format($unit_price * $product['quantity'], $this->session->data['currency']);
+      ]]></search>
+      <add><![CDATA[
+      $price_tax = $this->currency->format($unit_price_tax, $this->session->data['currency']);
+      //$total_tax = $this->currency->format($unit_price_tax * $product['quantity'], $this->session->data['currency']);
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="after"><![CDATA[
+      'total'     => $total,
+      ]]></search>
+      <add><![CDATA[
+        'price_tax'     => $price_tax,
+      ]]></add>
+    </operation>
+  </file>
+  <file name="catalog/view/theme/journal3/template/checkout/cart.twig">
+    <operation info="">
+      <search position="after"><![CDATA[
+      <td class="text-center td-price">{{ column_price }}</td>
+      ]]></search>
+      <add><![CDATA[
+      <td class="text-center td-price_tax">{{ column_price_tax }}</td>
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="after"><![CDATA[
+      <td class="text-center td-price">{{ product.price }}</td>
+      ]]></search>
+      <add><![CDATA[
+      <td class="text-center td-price_tax">{{ product.price_tax }}</td>
+      ]]></add>
+    </operation>
+  </file>
+
+  <file name="catalog/language/el-gr/checkout/cart.php">
+    <operation info="">
+      <search position="after"><![CDATA[
+      $_['column_total']             = 'Σύνολο';
+      ]]></search>
+      <add><![CDATA[
+        $_['column_price_tax']             = 'Φ.Π.Α';
+      ]]></add>
+    </operation>
+  </file>
+
+  <file name="catalog/controller/journal3/checkout.php">
+    <operation info="">
+      <search position="replace"><![CDATA[
+      'price'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),
+      ]]></search>
+      <add><![CDATA[
+      'price'      => $this->currency->format($product['price'], $this->session->data['currency']),
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="before"><![CDATA[
+      'total'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity'], $this->session->data['currency']),
+      ]]></search>
+      <add><![CDATA[
+      'price_tax'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax'))-$product['price'], $this->session->data['currency']),
+      ]]></add>
+    </operation>
+  </file>
+
+  <file name="/catalog/view/theme/journal3/template/journal3/checkout/cart.twig">
+    <operation info="">
+      <search position="after"><![CDATA[
+      <td class="text-right td-price">{{ column_price }}</td>
+      ]]></search>
+      <add><![CDATA[
+      <td class="text-right td-price_tax">{{ column_price_tax }}</td>
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="after"><![CDATA[
+      <td class="text-right td-price" v-html="product.price"></td>
+      ]]></search>
+      <add><![CDATA[
+      <td class="text-right td-price_tax" v-html="product.price_tax"></td>
+      ]]></add>
+    </operation>
+  </file>
+
+  <file name="/catalog/language/el-gr/checkout/checkout.php">
+    <operation info=""> 
+      <search position="after"><![CDATA[
+      $_['column_name']                    = 'Όνομα Προϊόντος';
+      ]]></search>
+      <add><![CDATA[
+      $_['column_price_tax']                   = 'Φ.Π.Α';
+      ]]></add>
+    </operation>
+  </file>
+
+
+  <file name="catalog/controller/mail/order.php">
+    <operation info="">
+      <search position="after"><![CDATA[
+      $data['text_total'] = $language->get('text_total');
+      ]]></search>
+      <add><![CDATA[
+      $data['text_price_tax'] = $language->get('text_price_tax');
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="replace"><![CDATA[
+      'price'    => $this->currency->format($order_product['price'] + ($this->config->get('config_tax') ? $order_product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']),
+      ]]></search>
+      <add><![CDATA[
+      'price'    => $this->currency->format($order_product['price'], $order_info['currency_code'], $order_info['currency_value']),
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="before"><![CDATA[
+      'total'    => $this->currency->format($order_product['total'] + ($this->config->get('config_tax') ? ($order_product['tax'] * $order_product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value'])
+      ]]></search>
+      <add><![CDATA[
+      'price_tax'    => $this->currency->format(0 + ($this->config->get('config_tax') ? $order_product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']),
+      ]]></add>
+    </operation>
+  </file>
+
+  <file name="/catalog/view/theme/default/template/mail/order_add.twig">
+    <operation info="">
+      <search position="after"><![CDATA[
+      <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; background-color: #EFEFEF; font-weight: bold; text-align: right; padding: 7px; color: #222222;">{{ text_price }}</td>
+      ]]></search>
+      <add><![CDATA[
+      <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; background-color: #EFEFEF; font-weight: bold; text-align: right; padding: 7px; color: #222222;">{{ text_price_tax }}</td>
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="after"><![CDATA[
+      <td style="font-size: 12px;	border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: right; padding: 7px;">{{ product.price }}</td>
+      ]]></search>
+      <add><![CDATA[
+      <td style="font-size: 12px;	border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: right; padding: 7px;">{{ product.price_tax }}</td>
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="replace"><![CDATA[
+      <td style="font-size: 12px;	border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: right; padding: 7px;" colspan="4"><b>{{ total.title }}:</b></td>
+      ]]></search>
+      <add><![CDATA[
+      <td style="font-size: 12px;	border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: right; padding: 7px;" colspan="5"><b>{{ total.title }}:</b></td>
+      ]]></add>
+    </operation>
+  </file>
+
+  <file name="/catalog/language/el-gr/mail/order_add.php">
+    <operation info="">
+      <search position="after"><![CDATA[
+      $_['text_total']            = 'Σύνολο';
+      ]]></search>
+      <add><![CDATA[
+      $_['text_price_tax']            = 'Φ.Π.Α';
+      ]]></add>
+    </operation>
+  </file>
+
+
+
+</modification>

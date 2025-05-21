@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Invoice Type</id>
+	<version>1.0</version>
+	<vqmver>2.X</vqmver>
+	<author>Enterid</author>
+  <file name="admin/view/template/customer/custom_field_form.twig">
+      <operation error="log">
+          <search position="before" index="1"><![CDATA[</fieldset>]]></search>
+          <add><![CDATA[
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Invoice Type</label>
+              <div class="col-sm-10">
+                <div class="checkbox">
+                <label>
+                  {% if invoice_type %}
+                  <input type="radio" name="invoice_type" value="1" checked="checked" />
+                  {{ text_yes }}
+                  {% else %}
+                  <input type="radio" name="invoice_type" value="1" />
+                  {{ text_yes }}
+                  {% endif %}
+                </label>
+                <label>
+                  {% if not invoice_type %}
+                  <input type="radio" name="invoice_type" value="0" checked="checked" />
+                  {{ text_no }}
+                  {% else %}
+                  <input type="radio" name="invoice_type" value="0" />
+                  {{ text_no }}
+                  {% endif %}
+                </label>
+              </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Invoice Part</label>
+              <div class="col-sm-10">
+                <div class="checkbox">
+                <label>
+                  {% if invoice_part %}
+                  <input type="radio" name="invoice_part" value="1" checked="checked" />
+                  {{ text_yes }}
+                  {% else %}
+                  <input type="radio" name="invoice_part" value="1" />
+                  {{ text_yes }}
+                  {% endif %}
+                </label>
+                <label>
+                  {% if not invoice_part %}
+                  <input type="radio" name="invoice_part" value="0" checked="checked" />
+                  {{ text_no }}
+                  {% else %}
+                  <input type="radio" name="invoice_part" value="0" />
+                  {{ text_no }}
+                  {% endif %}
+                </label>
+              </div>
+              </div>
+            </div>
+            ]]></add>
+      </operation>
+  </file>
+  <file name="admin/model/customer/custom_field.php">
+      <operation error="log">
+          <search position="after"><![CDATA[$custom_field_id = $this->db->getLastId();]]></search>
+          <add><![CDATA[
+            if (isset($data['invoice_type']) && isset($data['invoice_part'])) {
+        				$this->db->query("INSERT INTO " . DB_PREFIX . "custom_field_invoice SET custom_field_id = '" . (int)$custom_field_id . "', invoice_type = '" . (int)$data['invoice_type']. "', invoice_part = '" . (int)$data['invoice_part'] . "', location='".$data['location']."'");
+        		}
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="before"><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "custom_field_customer_group WHERE custom_field_id = '" . (int)$custom_field_id . "'");]]></search>
+          <add><![CDATA[
+            $this->db->query("DELETE FROM " . DB_PREFIX . "custom_field_invoice WHERE custom_field_id = '" . (int)$custom_field_id . "'");
+            if (isset($data['invoice_type']) && isset($data['invoice_part'])) {
+        				$this->db->query("INSERT INTO " . DB_PREFIX . "custom_field_invoice SET custom_field_id = '" . (int)$custom_field_id . "', invoice_type = '" . (int)$data['invoice_type']. "', invoice_part = '" . (int)$data['invoice_part'] . "', location='".$data['location']."'");
+        		}
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="before"><![CDATA[$this->db->query("DELETE FROM `" . DB_PREFIX . "custom_field` WHERE custom_field_id = '" . (int)$custom_field_id . "'");]]></search>
+          <add><![CDATA[
+            $this->db->query("DELETE FROM `" . DB_PREFIX . "custom_field_invoice` WHERE custom_field_id = '" . (int)$custom_field_id . "'");
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="before"><![CDATA[public function getCustomFields($data = array()) {]]></search>
+          <add><![CDATA[
+            public function getCustomFieldInvoice($custom_field_id) {
+              $q = $this->db->query("SELECT * FROM ".DB_PREFIX."custom_field_invoice WHERE custom_field_id='".(int)$custom_field_id."'");
+              if($q->num_rows > 0){
+                return $q->row;
+              } else {
+                return false;
+              }
+            }
+            ]]></add>
+      </operation>
+  </file>
+  <file name="admin/controller/customer/custom_field.php">
+      <operation error="log">
+          <search position="before"><![CDATA[if (isset($this->request->post['status'])) {]]></search>
+          <add><![CDATA[
+						if (isset($this->request->get['custom_field_id'])) {
+            	$invoice_info = $this->model_customer_custom_field->getCustomFieldInvoice($this->request->get['custom_field_id']);
+						} else {
+							$invoice_info = false;
+						}
+
+
+
+            if (isset($this->request->post['invoice_type'])) {
+              $data['invoice_type'] = $this->request->post['invoice_type'];
+            } elseif ($invoice_info) {
+              $data['invoice_type'] = $invoice_info['invoice_type'];
+            } else {
+              $data['invoice_type'] = '';
+            }
+
+            if (isset($this->request->post['invoice_part'])) {
+              $data['invoice_part'] = $this->request->post['invoice_part'];
+            } elseif ($invoice_info) {
+              $data['invoice_part'] = $invoice_info['invoice_part'];
+            } else {
+              $data['invoice_part'] = '';
+            }
+            ]]></add>
+      </operation>
+  </file>
+  <file name="catalog/model/account/custom_field.php">
+      <operation error="log">
+          <search position="before"><![CDATA[$custom_field_data[] = array(]]></search>
+          <add><![CDATA[
+            $invoice_info = $this->db->query("SELECT * FROM ".DB_PREFIX."custom_field_invoice WHERE custom_field_id='".(int)$custom_field['custom_field_id']."'");
+            ]]></add>
+      </operation>
+      <operation error="log">
+          <search position="after"><![CDATA[=> $custom_field['location'],]]></search>
+          <add><![CDATA[
+            'invoice_type'    => (isset($invoice_info->row['invoice_type'])? $invoice_info->row['invoice_type']:0),
+            'invoice_part'    =>(isset($invoice_info->row['invoice_part'])? $invoice_info->row['invoice_part']:0),
+            ]]></add>
+      </operation>
+  </file>
+
+	<file name="catalog/controller/checkout/checkout.php">
+		<operation error="log">
+			<search position="before"><![CDATA[$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');]]></search>
+			<add><![CDATA[
+				//$this->document->addScript('catalog/view/javascript/timologio.js');
+				]]></add>
+		</operation>
+		<operation error="log">
+			<search position="after"><![CDATA[$json[] = array(]]></search>
+			<add><![CDATA[
+				'invoice_part'	=> $custom_field['invoice_part'],
+				'invoice_type'	=> $custom_field['invoice_type'],
+				]]></add>
+		</operation>
+		<operation error="log">
+			<search position="before"><![CDATA[public function customfield() {]]></search>
+			<add><![CDATA[
+				public function getTimologioSelectField(){
+					$q = $this->db->query("SELECT * FROM ".DB_PREFIX."custom_field_invoice WHERE invoice_part='1' AND invoice_type='1'");
+					$json=array();
+					if($q->num_rows > 0){
+						$json['customFiledSelectId'] = $q->row['custom_field_id'];
+					} else {
+						$json['customFiledSelectId'] = false;
+					}
+
+					$this->response->addHeader('Content-Type: application/json');
+					$this->response->setOutput(json_encode($json));
+				}
+				]]></add>
+		</operation>
+	</file>
+
+  <file name="admin/controller/sale/order.php">
+		<operation error="log">
+				<search position="after"><![CDATA[$custom_fields = $this->model_customer_custom_field->getCustomFields($filter_data);]]></search>
+				<add><![CDATA[
+          $data['timologio'] = false;
+          foreach ($custom_fields as $custom_field) {
+            $custom_field_invoice = $this->model_customer_custom_field->getCustomFieldInvoice($custom_field['custom_field_id']);
+            if($custom_field['location'] == 'address'){
+              $custom_field_value_info = $this->model_customer_custom_field->getCustomFieldValue($order_info['payment_custom_field'][$custom_field['custom_field_id']]);
+            } else {
+              $custom_field_value_info = $this->model_customer_custom_field->getCustomFieldValue($order_info['custom_field'][$custom_field['custom_field_id']]);
+            }
+
+            if($custom_field_invoice['invoice_type'] == '1' && (isset($custom_field_value_info['custom_field_value_id']) && $custom_field_value_info['custom_field_value_id'] == '2')){
+              $data['timologio'] = true;
+            }
+          }
+					]]></add>
+		</operation>
+	</file>
+
+  <file name="admin/language/*/sale/order.php">
+      <operation error="log">
+          <search position=""><![CDATA[// Text]]></search>
+          <add><![CDATA[
+            $_['text_invoice']        = 'Τιμολόγιο';
+            $_['text_receipt']        = 'Απόδειξη';
+            ]]></add>
+      </operation>
+  </file>
+  <file name="admin/view/template/sale/order_info.twig">
+		<operation error="log">
+				<search position="replace"><![CDATA[<td>{{ text_invoice }}</td>]]></search>
+				<add><![CDATA[
+					{{ order.custom_field }}
+					{% if timologio %}
+					<td>{{ text_invoice }}</td>
+					{% else %}
+					<td>{{ text_receipt }}</td>
+					{% endif %}
+					]]></add>
+		</operation>
+	</file>
+	<file name="catalog/view/theme/*/template/checkout/guest.twig">
+			<operation error="skip">
+					<search position="replace"><![CDATA[if (custom_field['required']) {]]></search>
+					<add><![CDATA[
+						if (custom_field['invoice_part']=='1') {
+							$('#payment-custom-field' + custom_field['custom_field_id']).attr('data-invoice-part', custom_field['invoice_part']);
+						}
+						if (custom_field['invoice_type']=='1' && custom_field['invoice_part']=='1') {
+							$('#payment-custom-field' + custom_field['custom_field_id']).attr('data-invoice-type', custom_field['invoice_type']);
+						} else if(custom_field['invoice_type']=='0' && custom_field['invoice_part']=='1') {
+							$('#payment-custom-field' + custom_field['custom_field_id']).attr('data-invoice-type', custom_field['invoice_type']);
+						}
+
+						if (custom_field['required']) {
+						]]></add>
+			</operation>
+			<operation error="skip">
+					<search position="after" offset="2"><![CDATA[$('#payment-custom-field' + custom_field['custom_field_id']).removeClass('required');]]></search>
+					<add><![CDATA[
+						$(function() {
+							if($('[data-invoice-type="1"] select').val() == '1' || $('[data-invoice-type="1"] select').val() == ''){
+								$('[data-invoice-type="0"]').hide();
+							}
+							$('[data-invoice-type="1"] select').on('change', function(){
+								if($('[data-invoice-type="1"] select').val() == '1' || $('[data-invoice-type="1"] select').val() == ''){
+									$('[data-invoice-type="0"][data-invoice-part="1"]').hide();
+								} else {
+									$('[data-invoice-type="0"][data-invoice-part="1"]').show();
+								}
+							});
+						});
+						]]></add>
+			</operation>
+	</file>
+	<file name="catalog/controller/checkout/guest.php">
+			<operation error="log">
+					<search position="replace"><![CDATA[if ($custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']])) {]]></search>
+					<add><![CDATA[
+				if ($custom_field['required'] && empty(trim($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']])) && $exeiTimologio) {
+					$json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+				} elseif ($custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']]) && !$exeiTimologio) {
+						]]></add>
+			</operation>
+			<operation error="log">
+					<search position="before"><![CDATA[$custom_fields = $this->model_account_custom_field->getCustomFields($customer_group_id);]]></search>
+					<add><![CDATA[
+						$ei_custom_fields = $this->model_account_custom_field->getCustomFields($customer_group_id);
+						// $this->log->write($this->request->post['custom_field']);
+						// $this->log->write($ei_custom_fields);
+						$exeiTimologio = false;
+						foreach($ei_custom_fields as $eicf){
+							if($eicf['invoice_type'] == '1' && $this->request->post['custom_field'][$eicf['location']][$eicf['custom_field_id']] == 2){
+								$exeiTimologio = true;
+							}
+
+						}
+						]]></add>
+			</operation>
+	</file>
+	<file name="catalog/controller/api/customer.php">
+			<operation error="log">
+					<search position="replace"><![CDATA[if ($custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']])) {]]></search>
+					<add><![CDATA[
+				if ($custom_field['required'] && empty(trim($this->request->post['custom_field'][$custom_field['custom_field_id']])) && $exeiTimologio) {
+					$json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+				} elseif ($custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['custom_field_id']]) && !$exeiTimologio) {
+						]]></add>
+			</operation>
+			<operation error="log">
+					<search position="before"><![CDATA[$custom_fields = $this->model_account_custom_field->getCustomFields($customer_group_id);]]></search>
+					<add><![CDATA[
+						$ei_custom_fields = $this->model_account_custom_field->getCustomFields($customer_group_id);
+						// $this->log->write($this->request->post['custom_field']);
+						// $this->log->write($ei_custom_fields);
+						$exeiTimologio = false;
+						foreach($ei_custom_fields as $eicf){
+							if($eicf['invoice_type'] == '1' && $this->request->post['custom_field'][$eicf['location']][$eicf['custom_field_id']] == 2){
+								$exeiTimologio = true;
+							}
+						}
+						]]></add>
+			</operation>
+	</file>
+
+	<!--Journal3 quick checkout-->
+	<file name="catalog/view/theme/journal3/template/journal3/checkout/checkout.twig">
+			<operation error="log">
+					<search><![CDATA[($)]]></search>
+					<add position="bottom"><![CDATA[
+<script>
+	(function( $ ){
+	  $.fn.getInvoiceSelector = function(){
+	    var selectid;
+	    $.ajax({
+	         async: false,
+	         type: 'GET',
+	         url: 'index.php?route=checkout/checkout/getTimologioSelectField',
+	         success: function(fieldId) {
+	           customFieldId = fieldId.customFiledSelectId;
+	           selectid = '#account-custom-field' + customFieldId+' select';
+	         }
+	    });
+	    console.log('before return');
+	    return selectid;
+	  };
+	})( jQuery );
+	$(document).ready(function(){
+    $($.fn.getInvoiceSelector()).val('1');
+    hideForm();
+
+	    $($.fn.getInvoiceSelector()).on('change', function(){
+	      if ($(this).val() === "2") {
+	        console.log($(this).val());
+	        showForm();
+	      } else {
+					console.log($(this).val());
+	       hideForm();
+	      }
+	    });
+
+	  function hideForm(){
+	  console.log('hide');
+	          $("#account-custom-field2").hide().removeClass('required');
+	          $("#account-custom-field3").hide().removeClass('required');
+	          $("#account-custom-field4").hide().removeClass('required');
+	          $("#account-custom-field5").hide().removeClass('required');
+	  }
+	  function showForm(){
+	  console.log('show');
+	          $("#account-custom-field2").show().addClass('required');
+	          $("#account-custom-field3").show().addClass('required');
+	          $("#account-custom-field4").show().addClass('required');
+	          $("#account-custom-field5").show().addClass('required');
+	  }
+
+	});
+</script>
+						]]></add>
+			</operation>
+	</file>
+	<file name="catalog/controller/journal3/checkout.php">
+			<operation error="log">
+					<search position="replace"><![CDATA[if ($custom_field['required'] && empty($value)) {]]></search>
+					<add><![CDATA[
+						if ($custom_field['required'] && empty(trim($this->request->post['order_data']['custom_field'][$custom_field['custom_field_id']])) && $exeiTimologio) {
+							$error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+						} elseif ($custom_field['required'] && empty($value) && $exeiTimologio) {
+						]]></add>
+			</operation>
+			<operation error="log">
+					<search position="after"><![CDATA[foreach (Arr::get($custom_fields, 'custom_fields.account', array()) as $custom_field) {]]></search>
+					<add><![CDATA[
+						$this->load->model('account/custom_field');
+						$ei_custom_fields = $this->model_account_custom_field->getCustomFields($this->customer->getGroupId());
+						$exeiTimologio = false;
+						foreach($ei_custom_fields as $eicf){
+							if($eicf['invoice_type'] == '1' && $this->request->post['order_data']['custom_field'][$eicf['custom_field_id']] == 2){
+								$exeiTimologio = true;
+							}
+						}
+						]]></add>
+			</operation>
+	</file>
+	<!--Journal3 quick checkout END-->
+
+	<file name="catalog/controller/account/register.php">
+			<operation error="log">
+					<search position="replace"><![CDATA[if ($custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']])) {]]></search>
+					<add><![CDATA[
+				//if ($custom_field['required'] && empty(trim($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']])) && $exeiTimologio) {
+				if ((isset($this->request->post['wholesales']) && $this->request->post['wholesales'] == '2') && empty(trim($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']])) && $exeiTimologio) {
+					$json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+				//} elseif ($custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']]) && !$exeiTimologio) {
+				} elseif ((isset($this->request->post['wholesales']) && $this->request->post['wholesales'] == '2') && empty($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']]) && !$exeiTimologio) {
+						]]></add>
+			</operation>
+			<operation error="log">
+					<search position="before" index="1"><![CDATA[$custom_fields = $this->model_account_custom_field->getCustomFields($customer_group_id);]]></search>
+					<add><![CDATA[
+						$ei_custom_fields = $this->model_account_custom_field->getCustomFields($customer_group_id);
+						// $this->log->write($this->request->post['custom_field']);
+						// $this->log->write($ei_custom_fields);
+						$exeiTimologio = false;
+						foreach($ei_custom_fields as $eicf){
+							if($eicf['invoice_type'] == '1' && $this->request->post['custom_field'][$eicf['location']][$eicf['custom_field_id']] == 1){
+								$exeiTimologio = true;
+							}
+							if(isset($this->request->post['wholesales']) && $this->request->post['wholesales'] == '2'){
+								$eicf['required'] = true;
+							}
+						}
+						$data['timologio'] = $exeiTimologio;
+						]]></add>
+			</operation>
+	</file>
+	<file name="catalog/view/theme/*/template/account/register.twig">
+		<operation error="log">
+			<search position="replace"><![CDATA[id="input-custom-field{{ custom_field.custom_field_id }}"]]></search>
+			<add><![CDATA[id="input-custom-field{{ custom_field.custom_field_id }}" data-invoice-type="{{ custom_field.invoice_type }}" data-invoice-part="{{ custom_field.invoice_part }}"]]></add>
+		</operation>
+		<operation error="log">
+			<search position="before"><![CDATA[{{ footer }} ]]></search>
+			<add><![CDATA[
+<script type="text/javascript"><!--
+
+	$(document).ready(function(){
+	setTimeout(
+	  function() {
+			if($('select[data-invoice-type="1"]').val() == 2){
+				$('*[data-invoice-type="0"][data-invoice-part="1"]').parent().parent().show();
+			} else {
+				$('*[data-invoice-type="0"][data-invoice-part="1"]').parent().parent().hide();
+			}
+		}, 1000);
+	});
+
+	var selector = $('select[data-invoice-type="1"]');
+	var invoice_fields = $('*[data-invoice-type="0"][data-invoice-part="1"]').parent().parent();
+	$(selector).on('change', function(){
+		if($(this).val() == 2){
+			$(invoice_fields).show();
+		} else {
+			$(invoice_fields).hide();
+		}
+	});
+
+
+
+//--></script>
+				]]></add>
+		</operation>
+	</file>
+</modification>

@@ -1,0 +1,155 @@
+<modification>
+
+	<id>MinMaxOrder Total</id>
+	<version>230.1</version>
+	<vqmver>2.6.1</vqmver>
+	<author>Qphoria</author>
+
+	<file name="catalog/controller/checkout/cart.php">
+		<operation>
+			<search position="after"><![CDATA[
+			public function index()
+			]]></search>
+			<add trim="true"><![CDATA[
+		//Q: MinMaxOrder
+		$minmaxcartpage = true;
+		include(DIR_SYSTEM . '../catalog/model/extension/total/minmaxorder.inc.php');
+		//
+			]]></add>
+		</operation>
+		
+		<operation><!-- needed for 152+ but 151 safe -->
+			<!--ignoreif><![CDATA[$this->data['error_warning'] = $this->error['warning'];]]></ignoreif-->
+			<ignoreif><![CDATA[$this->session->data['error']]]></ignoreif>
+			<search position="before"><![CDATA[
+			if (isset($this->session->data['success'])) {
+			]]></search>
+			<add trim="true"><![CDATA[
+			if (isset($this->session->data['error'])) {
+				$data['error_warning'] = $this->session->data['error'];
+				if (isset($this->data)) { $this->data = array_merge($this->data, $data); } // 1.5.x. backwards compatibility
+			}
+			]]></add>
+		</operation>
+		
+	</file>
+
+	<file name="catalog/controller/checkout/checkout.php">
+		<operation>
+			<search position="after"><![CDATA[
+			public function index()
+			]]></search>
+			<add trim="true"><![CDATA[
+		//Q: MinMaxOrder
+		include(DIR_SYSTEM . '../catalog/model/extension/total/minmaxorder.inc.php');
+		//
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/payment/paypal_express.php" error="skip">
+		<operation>
+			<search position="after"><![CDATA[
+			function SetExpressCheckout()
+			]]></search>
+			<add trim="true"><![CDATA[
+		//Q: MinMaxOrder
+		include(DIR_SYSTEM . '../catalog/model/extension/total/minmaxorder.inc.php');
+		//
+			]]></add>
+		</operation>
+		
+		<operation>
+			<search position="after"><![CDATA[
+			function DoExpressCheckout()
+			]]></search>
+			<add trim="true"><![CDATA[
+		//Q: MinMaxOrder
+		include(DIR_SYSTEM . '../catalog/model/extension/total/minmaxorder.inc.php');
+		//
+			]]></add>
+		</operation>
+	</file>
+	
+	<!-- Needed for Uber Checkout 1.5.x -->
+	<file name="catalog/controller/checkout/checkout_two.php" error="skip">
+		<operation error="skip">
+			<search position="after"><![CDATA[
+			$this->load->model('setting/extension');
+			]]></search>
+			<add trim="true"><![CDATA[
+		//Q: MinMaxOrder
+		include(DIR_SYSTEM . '../catalog/model/extension/total/minmaxorder.inc.php');
+		//
+			]]></add>
+		</operation>
+	</file>
+	
+	<!-- Needed for Simple Checkout 1.5.x -->
+	<file name="catalog/controller/checkout/simplecheckout.php" error="skip">
+		<operation error="skip">
+			<search position="after"><![CDATA[
+			function index()
+			]]></search>
+			<add trim="true"><![CDATA[
+		//Q: MinMaxOrder
+		include(DIR_SYSTEM . '../catalog/model/extension/total/minmaxorder.inc.php');
+		//
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/checkout/simplecheckout_cart.php" error="skip">
+		<operation>
+			<search position="after"><![CDATA[
+			public function index()
+			]]></search>
+			<add trim="true"><![CDATA[
+		//Q: MinMaxOrder
+		$minmaxcartpage = true;
+		include(DIR_SYSTEM . '../catalog/model/extension/total/minmaxorder.inc.php');
+		//
+			]]></add>
+		</operation>
+		
+		<operation error="skip"><!-- needed for 152+ but 151 safe -->
+			<search position="before"><![CDATA[
+			if (isset($this->session->data['success'])) {
+			]]></search>
+			<add trim="true"><![CDATA[
+			if (isset($this->session->data['error'])) {
+				$data['error_warning'] = $this->session->data['error'];
+				if (isset($this->data)) { $this->data = array_merge($this->data, $data); } // 1.5.x. backwards compatibility
+			}
+			]]></add>
+		</operation>
+		
+	</file>
+	
+	<file name="catalog/controller/quickcheckout/checkout.php" error="skip">
+		<operation>
+			<search position="after"><![CDATA[
+			public function index()
+			]]></search>
+			<add trim="true"><![CDATA[
+		//Q: MinMaxOrder
+		include(DIR_SYSTEM . '../catalog/model/extension/total/minmaxorder.inc.php');
+		//
+			]]></add>
+		</operation>	
+	</file>
+	
+	<file name="catalog/controller/checkout/checkout_onepage.php" error="skip">
+		<operation>
+			<search position="after"><![CDATA[
+			function index
+			]]></search>
+			<add trim="true"><![CDATA[
+		//Q: MinMaxOrder
+		include(DIR_SYSTEM . '../catalog/model/extension/total/minmaxorder.inc.php');
+		//
+			]]></add>
+		</operation>
+	</file>
+
+</modification>

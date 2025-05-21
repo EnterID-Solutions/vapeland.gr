@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+   <id>Sync product to velvet</id>
+   <version>1.0</version>
+   <vqmver>2.X</vqmver>
+   <author>Enterid</author>
+   <file name="admin/controller/catalog/category.php">
+       <operation info="">
+           <search position="before"><![CDATA[
+           $data['cancel'] = $this->url->link('catalog/category', 'user_token=' . $this->session->data['user_token'] . $url, true);
+           ]]></search>
+           <add><![CDATA[
+            $data['category_id'] = $this->request->get['category_id'];
+           ]]></add>
+       </operation>
+   </file>
+   <file name="admin/view/template/catalog/category_form.twig">
+       <operation info="">
+           <search position="before" offset="1"><![CDATA[
+           <div class="tab-pane" id="tab-seo">
+           ]]></search>
+           <add><![CDATA[
+             <div class="form-group">
+               <label class="col-sm-2 control-label" for="">Sync</label>
+               <div class="col-sm-10">
+                 <a href="https://www.velvetvape.com/index.php?route=bridge/vapelandbridge&category_id={{category_id}}" target="_blank">Sync</a>
+               </div>
+             </div>
+           ]]></add>
+       </operation>
+   </file>
+</modification>

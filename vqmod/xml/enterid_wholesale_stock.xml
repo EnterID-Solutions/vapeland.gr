@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+  <name>Wholesale display stock</name>
+	<version>1.2.0</version>
+	<link>https://www.opencart.gr/</link>
+	<author>Opencart.gr</author>
+  <file name="catalog/view/theme/journal3/template/product/product.twig">
+    <operation error="skip">
+      <search position="before"><![CDATA[{% if j3.settings.get(stylePrefix ~ 'ProductLocation') and product_location %}]]></search>
+      <add><![CDATA[
+        {% if isWholesale %}
+          <li class="product-model"><b>Διαθέσιμα Τεμάχια:</b> <span>{{ product_quantity }}</span></li>
+        {% endif %}
+        ]]></add>
+    </operation>
+  </file>
+  <file name="catalog/controller/product/product.php">
+    <operation error="skip">
+      <search position="before"><![CDATA[$data['product_ean'] = $product_info['ean'];]]></search>
+      <add><![CDATA[
+        if(in_array($this->customer->getGroupId(), $this->config->get('config_wholesale_customer_groups'))){
+          $data['isWholesale'] = true;
+        } else {
+          $data['isWholesale'] = false;
+        }
+        ]]></add>
+    </operation>
+  </file>
+
+</modification>

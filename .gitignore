@@ -1,5 +1,5 @@
 # Ignore config files that may contain sensitive information
-config.php
+/config.php
 admin/config.php
 
 # Ignore system cache, logs, and download directories
@@ -29,9 +29,17 @@ vendor/
 *.zip
 *.sh
 
+!vqmod/xml/*
+
 # Ignore OS generated files
 .DS_Store
 Thumbs.db
+
+/webanalyze
+/tsigaro-ilektroniko
+/journal-cache
+/journal-cache/*
+/shake-slider
 
 
 # Ignore Visual Studio Code files

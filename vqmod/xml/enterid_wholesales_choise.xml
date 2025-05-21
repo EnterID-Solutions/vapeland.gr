@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification
+              xmlns="https://github.com/vqmod/vqmod"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://github.com/vqmod/vqmod https://raw.githubusercontent.com/vqmod/vqmod/master/vqmod.xsd">
+              >
+  <id>Replace ABC with 123</id>
+  <version>1.0</version>
+  <vqmver>2.X</vqmver>
+  <author>Enterid Wholesales Customer Choise</author>
+  <file name="catalog/language/el-gr/account/register.php">
+    <operation info="">
+      <search position="after"><![CDATA[
+      $_['entry_confirm']        = 'Επιβεβαίωση Κωδικού';
+      ]]></search>
+      <add><![CDATA[
+      $_['entry_wholesales']     = 'Τύπος Λογαριασμού';
+      $_['text_retail']          = 'Λιανικής';
+      $_['text_wholesale']       = 'Χονδρικης';
+      ]]></add>
+    </operation>
+  </file>
+  <file name="catalog/language/en-gb/account/register.php">
+    <operation info="">
+      <search position="after"><![CDATA[
+      $_['entry_confirm']        = 'Password Confirm';
+      ]]></search>
+      <add><![CDATA[
+      $_['entry_wholesales']       = 'Account Type';
+      $_['text_retail']       = 'Retail';
+      $_['text_wholesale']       = 'Wholesale';
+      ]]></add>
+    </operation>
+  </file>
+  <file name="catalog/controller/account/register.php">
+    <operation info="">
+      <search position="after"><![CDATA[
+      if (isset($this->request->post['telephone'])) {
+      ]]></search>
+      <add><![CDATA[
+        if (isset($this->request->post['wholesales'])) {
+    			$data['wholesales'] = $this->request->post['wholesales'];
+    		} else {
+    			$data['wholesales'] = '';
+    		}
+      ]]></add>
+    </operation>
+  </file>
+  <file name="catalog/view/theme/journal3/template/account/register.twig">
+    <operation info="">
+      <search position="before"><![CDATA[
+      {% for custom_field in custom_fields %}
+      ]]></search>
+      <add><![CDATA[
+        <div class="form-group  account-wholesales">
+          <label class="col-sm-2 control-label" for="input-wholesales">{{ entry_wholesales }}</label>
+          <div class="col-sm-10">
+            <select name="wholesales" id="input-wholesales" data-invoice-type="1" data-invoice-part="1" class="form-control">
+              <option value=""> --- Επιλέξτε --- </option>
+              <option value="1"  {{ (wholesales==1) ? 'selected' : '' }}  >{{ text_retail }}</option>
+              <option value="2" {{ (wholesales==2) ? 'selected' : '' }} >{{ text_wholesale }}</option>
+            </select>
+          </div>
+        </div>
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="before"><![CDATA[
+      {{ footer }}
+      ]]></search>
+      <add><![CDATA[
+        <script type="text/javascript"><!--
+          $("#input-wholesales").change(function(){
+            if (this.value ==2){
+              $("#input-custom-field1").val("2");
+            }
+          });
+        //--></script>
+      ]]></add>
+    </operation>
+  </file>
+  <file name="catalog/model/account/customer.php">
+    <operation info="">
+      <search position="before"><![CDATA[
+      return $customer_id;
+      ]]></search>
+      <add><![CDATA[
+        if ($data['wholesales']==2) {
+    			$this->db->query("INSERT INTO `" . DB_PREFIX . "customer_approval` SET customer_id = '" . (int)$customer_id . "', type = 'customer', date_added = NOW()");
+          $this->db->query("UPDATE " . DB_PREFIX . "customer SET status = 0 WHERE customer_id = '" . (int)$customer_id . "'");
+    		}
+      ]]></add>
+    </operation>
+  </file>
+  <file name="catalog/controller/mail/register.php">
+    <operation info="">
+      <search position="before"><![CDATA[
+      $data['login'] = $this->url->link('account/login', '', true);
+      ]]></search>
+      <add><![CDATA[
+      //print_r($args);
+      if ($args[0]['wholesales']=='2'){
+         $data['wholesales_account'] = 1;
+      }else{
+        $data['wholesales_account'] = 0;
+      }
+      ]]></add>
+    </operation>
+  </file>
+  <file name="catalog/view/theme/default/template/mail/register.twig">
+    <operation info="">
+      <search position="before"><![CDATA[
+      {{ text_welcome }}
+      ]]></search>
+      <add><![CDATA[
+{% if wholesales_account %}
+{{ wholesales_text }}
+
+{{ text_thanks }}
+
+vapeland.gr
+{% else %}
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="after"><![CDATA[
+      {% endif %}
+      ]]></search>
+      <add><![CDATA[
+      {% endif %}
+      ]]></add>
+    </operation>
+  </file>
+  <file name="catalog/language/el-gr/mail/register.php">
+    <operation info="">
+      <search position="before"><![CDATA[
+      $_['text_telephone']      = 'Τηλέφωνο:';
+      ]]></search>
+      <add><![CDATA[
+      $_['wholesales_text']      = "Σας ευχαριστούμε για την εγγραφή σας, το αρμόδιο τμήμα θα εξετάσει την αίτησή σας, και θα σας ενημερώσουμε.";
+      ]]></add>
+    </operation>
+  </file>
+  <file name="admin/controller/mail/customer.php">
+    <operation info="">
+      <search position="before"><![CDATA[
+      $data['store'] = $store_name;
+      ]]></search>
+      <add><![CDATA[
+      $data['text_login'] = 'Μπορείτε να συνδεθείτε στο παρακάτω λινκ:';
+      ]]></add>
+    </operation>
+  </file>
+</modification>

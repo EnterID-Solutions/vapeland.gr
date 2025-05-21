@@ -1,0 +1,17 @@
+<modification>
+	<id><![CDATA[Enterid custom css]]></id>
+	<version><![CDATA[1.0]]></version>
+	<vqmver><![CDATA[2.0]]></vqmver>
+	<author><![CDATA[Enterid]]></author>
+
+  <file name="catalog/controller/common/header.php">
+    <operation error="log">
+      <search position="before"><![CDATA[if ($this->request->server['HTTPS']) {]]></search>
+      <add><![CDATA[
+        $this->document->addStyle('catalog/view/stylesheet/enterid.css?v=1.6');
+        $this->document->addStyle('catalog/view/stylesheet/enterid_responsive.css');
+        ]]></add>
+    </operation>
+  </file>
+
+</modification>

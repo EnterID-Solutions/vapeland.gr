@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification
+              xmlns="https://github.com/vqmod/vqmod"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://github.com/vqmod/vqmod https://raw.githubusercontent.com/vqmod/vqmod/master/vqmod.xsd">
+              >
+  <id>Inactive Manufacturers</id>
+  <version>1.0</version>
+  <vqmver>2.X</vqmver>
+  <author>Enterid</author>
+  <file name="/catalog/controller/product/manufacturer.php">
+    <operation info="">
+      <search position="before"><![CDATA[
+      if (is_numeric(utf8_substr($result['name'], 0, 1))) {
+      ]]></search>
+      <add><![CDATA[
+	  $active = $this->model_catalog_manufacturer->isActiveManufacturers($result['manufacturer_id']);
+	  if (!$active){
+		continue;
+	  }
+      ]]></add>
+    </operation>
+  </file>
+  <file name="/catalog/model/catalog/manufacturer.php">
+    <operation info="">
+      <search position="before"><![CDATA[
+      public function getManufacturers($data = array()) {
+      ]]></search>
+      <add><![CDATA[
+      public function isActiveManufacturers($manufacturer_id) {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product WHERE manufacturer_id=". $manufacturer_id . " AND status=1");
+        //echo $manufacturer_id . " " . $query->num_rows . "<br></br>";
+	    return $query->num_rows;
+	  }
+      ]]></add>
+    </operation>
+  </file>
+</modification>

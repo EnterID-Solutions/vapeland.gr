@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification
+              xmlns="https://github.com/vqmod/vqmod"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://github.com/vqmod/vqmod https://raw.githubusercontent.com/vqmod/vqmod/master/vqmod.xsd">
+              >
+  <id>Hide points from wholesale customers</id>
+  <version>1.0</version>
+  <vqmver>2.X</vqmver>
+  <author>Enterid</author>
+  <file name="catalog/controller/journal3/checkout.php">
+    <operation info="">
+      <search position="after"><![CDATA[
+      $customer_id = $this->customer->getId();
+      ]]></search>
+      <add><![CDATA[
+      $customer_group = $this->customer->getGroupId();
+      $customer_group_wholesale = ($customer_group!=8)?true:false;
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="after"><![CDATA[
+      $customer_id = '';
+      ]]></search>
+      <add><![CDATA[
+      $customer_group = false;
+      $customer_group_wholesale = false;
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="after"><![CDATA[
+      'customer_id'           => $customer_id,
+      ]]></search>
+      <add><![CDATA[
+      'customer_group'           => $customer_group,
+      'customer_group_wholesale'           => $customer_group_wholesale,
+      ]]></add>
+    </operation>
+  </file>
+  <file name="catalog/view/theme/journal3/template/journal3/checkout/coupon_voucher_reward.twig">
+    <operation info="">
+      <search position="replace"><![CDATA[
+      <div class="form-group form-reward" v-if="reward_status && customer_id">
+      ]]></search>
+      <add><![CDATA[
+      <div class="form-group form-reward" v-if="reward_status && customer_id && customer_group_wholesale==false">
+      ]]></add>
+    </operation>
+  </file>
+  <file name="/catalog/controller/product/product.php">
+    <operation info="">
+      <search position="after"><![CDATA[
+      $data['points'] = $product_info['points'];
+      ]]></search>
+      <add><![CDATA[
+      if ($this->customer->getId()){
+        $customer_group = $this->customer->getGroupId();
+        $data['customer_group_wholesale'] = ($customer_group!=8)?true:false;
+      }else{
+        $data['customer_group_wholesale'] == false;
+      }
+      ]]></add>
+    </operation>
+  </file>
+  <file name="/catalog/view/theme/journal3/template/product/product.twig">
+    <operation info="">
+      <search position="before"><![CDATA[
+      <div class="product-points">{{ text_points }} {{ points }}</div>
+      ]]></search>
+      <add><![CDATA[
+      {% if customer_group_wholesale==false %}
+      ]]></add>
+    </operation>
+    <operation info="">
+      <search position="after"><![CDATA[
+      <div class="product-points">{{ text_points }} {{ points }}</div>
+      ]]></search>
+      <add><![CDATA[
+      {% endif %}
+      ]]></add>
+    </operation>
+  </file>
+</modification>

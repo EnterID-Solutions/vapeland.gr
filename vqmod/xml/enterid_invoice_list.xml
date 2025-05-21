@@ -1,0 +1,74 @@
+<modification>
+	<id><![CDATA[Invoice in list]]></id>
+	<version><![CDATA[1.0]]></version>
+	<vqmver><![CDATA[2.0]]></vqmver>
+	<author><![CDATA[Enterid]]></author>
+    <file name="admin/view/template/sale/order_list.twig">
+        <operation error="log">
+            <search position="replace"><![CDATA[<td class="text-right">{{ order.order_id }}</td>]]></search>
+            <add><![CDATA[
+              <td class="text-right">{{ order.order_id }}
+                <br>
+									{% if order.isInvoice %}
+										<span>Τιμολόγιο</span>
+									{% else %}
+										<span>Απόδειξη</span>
+									{% endif %}
+
+              </td>
+              ]]></add>
+        </operation>
+    </file>
+    <file name="admin/controller/sale/order.php">
+      <operation error="log">
+        <search position="after"><![CDATA[$results = $this->model_sale_order->getOrders($filter_data);]]></search>
+        <add><![CDATA[
+          $this->load->model('customer/custom_field');
+          $data['custom_fields'] = array();
+
+          $filter_data = array(
+            'sort'  => 'cf.sort_order',
+            'order' => 'ASC'
+          );
+
+          $custom_fields = $this->model_customer_custom_field->getCustomFields($filter_data);
+
+          ]]></add>
+      </operation>
+      <operation error="log">
+        <search position="after" index="2"><![CDATA[foreach ($results as $result) {]]></search>
+        <add><![CDATA[
+          $order_info =$this->model_sale_order->getOrder($result['order_id']);
+					$order_custom_fields = array();
+					foreach($custom_fields as $cf){
+						$order_custom_fields[$cf['custom_field_id']]=array(
+							'custom_field_id' => $cf['custom_field_id'],
+							'field_name' => $cf['name'],
+							'value' => '',
+						);
+
+					}
+					$isInvoice = false;
+          if(isset($order_info['custom_field']) && is_array($order_info['custom_field'])){
+            foreach($order_info['custom_field'] as $k => $v){
+              if(isset($order_custom_fields[$k])){
+                $order_custom_fields[$k]['value'] = $v;
+								if($order_custom_fields[$k]['field_name'] == 'Παραστατικό' && $order_custom_fields[$k]['value'] == '2'){
+									$isInvoice = true;
+								}
+              }
+            }
+          }
+					//$this->log->write($result['order_id']. " " . $isInvoice);
+
+          ]]></add>
+      </operation>
+			<operation error="log">
+				<search position="after" index="1"><![CDATA[$data['orders'][] = array(]]></search>
+				<add><![CDATA[
+					'custom_fields' => $order_custom_fields,
+					'isInvoice' => $isInvoice,
+					]]></add>
+			</operation>
+    </file>
+ </modification>
