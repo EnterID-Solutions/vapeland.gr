@@ -1,0 +1,51 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="panel-title">{{ heading_title }} - {{ text_eligible_count|format(eligible_free_products) }}</h4>
+  </div>
+  <div class="panel-body">
+    {% if eligible_free_products > 0 %}
+    <div class="alert alert-info">
+      {{ text_eligible_count|format(eligible_free_products) }}
+    </div>
+    {% endif %}
+    
+    {% if free_products %}
+    <div class="free-products-applied">
+      <h5>{{ free_products_title }}</h5>
+      <ul class="list-unstyled">
+        {% for product in free_products %}
+        <li>{{ product.text }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    
+    <div class="available-products">
+      <h5>{{ available_products_title }}</h5>
+      {% if available_products %}
+        <div class="row">
+          {% for product in available_products %}
+          <div class="col-xs-6 col-sm-4 col-md-4 product-layout">
+            <div class="product-thumb transition">
+              <div class="image">
+                <a href="{{ product.href }}">
+                  <img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" />
+                </a>
+              </div>
+              <div class="caption">
+                <h4><a href="{{ product.href }}">{{ product.name }}</a></h4>
+                <p class="price">{{ product.price }}</p>
+              </div>
+              <div class="button-group">
+                <button type="button" onclick="cart.add('{{ product.product_id }}');"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs hidden-sm hidden-md">{{ add_to_cart_text }}</span></button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>{{ text_no_products }}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
