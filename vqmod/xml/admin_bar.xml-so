@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+  <name>Admin bar</name>
+	<version>1.2.0</version>
+	<link>https://www.opencart.gr/</link>
+	<author>Opencart.gr</author>
+<file name="catalog/controller/common/header.php">
+  <operation error="skip">
+    <search position="after"><![CDATA[$data['menu'] = $this->load->controller('common/menu');]]></search>
+    <add><![CDATA[
+      $data['adminbar'] = $this->load->controller('extension/module/adminbar');
+      ]]></add>
+  </operation>
+  <operation error="skip">
+    <search position="before"><![CDATA[$data['styles'] = $this->document->getStyles();]]></search>
+    <add><![CDATA[
+      $this->document->addStyle('catalog/view/stylesheet/adminbar.css');
+      ]]></add>
+  </operation>
+</file>
+<file name="catalog/view/theme/*/template/common/header.twig">
+  <operation error="skip">
+    <search position="after"><![CDATA[<body]]></search>
+    <add><![CDATA[
+      {{ adminbar }}
+      ]]></add>
+  </operation>
+</file>
+
+</modification>
